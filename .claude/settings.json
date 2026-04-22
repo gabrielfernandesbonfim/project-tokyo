@@ -37,6 +37,7 @@
     ],
     "allow": [
       "Read(**/.env.example)",
+      "Edit(**/.env.example)",
       "Bash(git:*)",
       "Bash(npm:*)",
       "Bash(npx:*)",

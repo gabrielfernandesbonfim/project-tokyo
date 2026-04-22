@@ -1,84 +1,88 @@
-# {NOME DO PROJETO}
+# {PROJECT NAME}
 
-## Contexto
+## Context
 
-{Descrição de 3-5 linhas do produto, problema que resolve, público-alvo.}
-{Preencher na fase /speckit.constitution ou /speckit.specify.}
+{3-5 line description of the product, the problem it solves, and the target audience.}
+{Fill in during the /speckit.constitution or /speckit.specify phase.}
 
 ## Stack
 
-{Definido na fase /speckit.plan — não preencher antes.}
+{Defined during the /speckit.plan phase — do not fill in before that.}
+
+## Language Policy
+
+**All artifacts written to disk must be in English** — `.md` files, configuration comments, code comments, commit messages, spec/task files, issue and PR descriptions. Conversations with the user can be in any language; everything written to disk must be English.
 
 ## Spec Kit
 
-Este projeto usa Spec-Driven Development via GitHub Spec Kit.
-Leia `.specify/memory/constitution.md` primeiro — é a fonte de verdade.
-Tudo que está lá é inegociável.
+This project uses Spec-Driven Development via the GitHub Spec Kit.
+Read `.specify/memory/constitution.md` first — it is the source of truth.
+Everything there is non-negotiable.
 
-### Comandos disponíveis
+### Available commands
 
-- `/speckit.constitution` — definir princípios do projeto
-- `/speckit.specify` — criar spec (O QUÊ, não COMO)
-- `/speckit.clarify` — resolver ambiguidades na spec
-- `/speckit.plan` — plano técnico + decisões de arquitetura
-- `/speckit.tasks` — gerar tasks com security checklist
-- `/speckit.analyze` — validar consistência entre artefatos
-- `/speckit.implement` — executar implementação
+- `/speckit.constitution` — define project principles
+- `/speckit.specify` — create the spec (WHAT, not HOW)
+- `/speckit.clarify` — resolve ambiguities in the spec
+- `/speckit.plan` — technical plan + architecture decisions
+- `/speckit.tasks` — generate tasks with security checklist
+- `/speckit.analyze` — validate consistency across artifacts
+- `/speckit.implement` — execute implementation
 
-## Agente: Regras de Comportamento
+## Agent: Behavior Rules
 
-### Contexto Mínimo (Token Economy)
+### Minimal Context (Token Economy)
 
-- Carregar APENAS o contexto relevante para a task atual
-- Nunca carregar spec.md completo — referenciar seções específicas
-- Nunca carregar tasks.md completo — trabalhar task por task
-- architecture.md: carregar uma vez por sessão, referenciar por nome depois
-- Se precisar de contexto de outro módulo, pedir explicitamente com justificativa
+- Load ONLY context relevant to the current task
+- Never load the full spec.md — reference specific sections
+- Never load the full tasks.md — work task by task
+- architecture.md: load once per session, reference by name afterwards
+- If context from another module is needed, ask explicitly with justification
 
-### Comportamento Padrão
+### Default Behavior
 
-- Sempre verificar constitution.md antes de nomear qualquer artefato
-- Sempre verificar docs/mcp-contracts.md antes de criar nova integração MCP
-- Nunca criar secrets, credenciais ou tokens no código — sempre .env
-- Nunca fazer chamadas de rede não documentadas no plano
-- Perguntar antes de decisões arquiteturais não previstas na spec
-- Preferir bibliotecas estabelecidas em vez de implementar do zero
-- Ao terminar uma task, rodar lint (biome/ruff) e testes antes de commitar
+- Always check constitution.md before naming any artifact
+- Always check docs/mcp-contracts.md before creating a new MCP integration
+- Never create secrets, credentials, or tokens in code — always use .env
+- Never make network calls not documented in the plan
+- Ask before making architectural decisions not covered in the spec
+- Prefer established libraries over implementing from scratch
+- When finishing a task, run lint (biome/ruff) and tests before committing
 
 ### Worktree Workflow
 
-Cada task deve ser executada em um worktree isolado:
+Every task must be executed in an isolated worktree:
 
 ```bash
-# Criar worktree
-git worktree add ../{projeto}-{feature}-{task} feature/{feature}/{task}
+# Create worktree
+git worktree add ../{project}-{feature}-{task} feature/{feature}/{task}
 
-# Ao concluir task
+# When task is complete
 git checkout feature/{feature}
-git merge feature/{feature}/{task} --no-ff -m "task({numero}): {nome}"
-git worktree remove ../{projeto}-{feature}-{task}
+git merge feature/{feature}/{task} --no-ff -m "task({number}): {name}"
+git worktree remove ../{project}-{feature}-{task}
 git branch -d feature/{feature}/{task}
 ```
 
-### Segurança
+### Security
 
-Antes de marcar qualquer task como concluída:
+Before marking any task as complete:
 
-- [ ] Inputs validados e sanitizados no servidor
-- [ ] Autenticação verificada antes da lógica de negócio
-- [ ] Queries parametrizadas — zero interpolação de string em SQL
-- [ ] Nenhum dado sensível em logs ou respostas de erro
-- [ ] Secrets em variáveis de ambiente — nenhum hardcoded
-- [ ] Dependências auditadas (npm audit / pip-audit)
+- [ ] Inputs validated and sanitized on the server
+- [ ] Authentication verified before business logic
+- [ ] Parameterized queries — zero string interpolation in SQL
+- [ ] No sensitive data in logs or error responses
+- [ ] Secrets in environment variables — none hardcoded
+- [ ] Dependencies audited (npm audit / pip-audit)
 
-### Documentação
+### Documentation
 
-- Atualizar `docs/modules/{modulo}.md` ao modificar um módulo
-- Atualizar `docs/mcp-contracts.md` se nova tool MCP criada
-- Manter CHANGELOG.md com Conventional Commits
+- Update `docs/modules/{module}.md` when modifying a module
+- Update `docs/mcp-contracts.md` if a new MCP tool is created
+- Keep CHANGELOG.md updated with Conventional Commits
 
-## Referências
+## References
 
-- Convenções: `.specify/memory/constitution.md`
-- Arquitetura: `docs/architecture.md`
+- Conventions: `.specify/memory/constitution.md`
+- Architecture: `docs/architecture.md`
 - MCP contracts: `docs/mcp-contracts.md`

@@ -1,140 +1,150 @@
-# Constitution — {NOME DO PROJETO}
+# Constitution — {PROJECT NAME}
 
-> Fonte de verdade do projeto. Inegociável. O agente deve consultar este arquivo antes de qualquer decisão.
+> Source of truth for the project. Non-negotiable. The agent must consult this file before any decision.
 
 ---
 
-## Princípios de Desenvolvimento
+## Language Policy
 
-1. **Spec antes de código** — nenhuma implementação sem task aprovada
-2. **Segurança não é opcional** — todo PR passa pelo security checklist
-3. **Documentação é parte da task** — não é etapa separada
-4. **Menor privilégio sempre** — permissões mínimas em todo nível
-5. **Contexto explícito** — agente não assume, pergunta
-6. **Bibliotecas antes de código custom** — preferir soluções estabelecidas
-7. **Conventional Commits** — todo commit segue o padrão `type(scope): description`
+**All artifacts written to disk must be in English** — `.md` files, configuration comments, code comments, commit messages, spec/task files, issue and PR descriptions.
+
+This rule applies regardless of the spoken/chat language used with the agent. Conversations with the agent can be in any language; everything written to disk must be English.
+
+**Why**: English yields the best LLM performance (largest training corpus, cleanest tokenization) and gives all shared tooling (grep, semantic search, embeddings) a consistent, predictable vocabulary.
+
+---
+
+## Development Principles
+
+1. **Spec before code** — no implementation without an approved task
+2. **Security is not optional** — every PR goes through the security checklist
+3. **Documentation is part of the task** — not a separate step
+4. **Least privilege always** — minimum permissions at every level
+5. **Explicit context** — the agent does not assume, it asks
+6. **Libraries before custom code** — prefer established solutions
+7. **Conventional Commits** — every commit follows `type(scope): description`
 
 ---
 
 ## Naming Conventions
 
-### Banco de Dados
+### Database
 
-- Tabelas: `snake_case`, plural, com prefixo de domínio (`auth_users`, `tenant_orgs`)
-- Chaves estrangeiras: `{tabela_referenciada_singular}_id`
-- Índices: `idx_{tabela}_{coluna}`
-- Migrations: `{timestamp}_{descricao_snake_case}.sql`
+- Tables: `snake_case`, plural, with domain prefix (`auth_users`, `tenant_orgs`)
+- Foreign keys: `{referenced_table_singular}_id`
+- Indexes: `idx_{table}_{column}`
+- Migrations: `{timestamp}_{snake_case_description}.sql`
 
-### Código (TypeScript/React)
+### Code (TypeScript/React)
 
-- Arquivos: `kebab-case.ts` / `kebab-case.tsx`
-- Componentes React: `PascalCase.tsx`
-- Funções e variáveis: `camelCase`
-- Constantes: `SCREAMING_SNAKE_CASE`
-- Tipos e interfaces: `PascalCase`
-- Hooks: `use-{nome}.ts`
+- Files: `kebab-case.ts` / `kebab-case.tsx`
+- React components: `PascalCase.tsx`
+- Functions and variables: `camelCase`
+- Constants: `SCREAMING_SNAKE_CASE`
+- Types and interfaces: `PascalCase`
+- Hooks: `use-{name}.ts`
 
-### Código (Python)
+### Code (Python)
 
-- Arquivos: `snake_case.py`
+- Files: `snake_case.py`
 - Classes: `PascalCase`
-- Funções e variáveis: `snake_case`
-- Constantes: `SCREAMING_SNAKE_CASE`
+- Functions and variables: `snake_case`
+- Constants: `SCREAMING_SNAKE_CASE`
 
-### Branches e Worktrees
+### Branches and Worktrees
 
-- Features: `feature/{numero}-{nome-kebab}`
-- Tasks: `feature/{numero}-{feature-nome}/{numero}-{task-nome}`
-- Hotfixes: `hotfix/{descricao}`
-- Releases: `release/{versao}`
+- Features: `feature/{number}-{kebab-name}`
+- Tasks: `feature/{number}-{feature-name}/{number}-{task-name}`
+- Hotfixes: `hotfix/{description}`
+- Releases: `release/{version}`
 
 ### MCP Tools
 
-- Formato: `{dominio}_{verbo}_{recurso}`
-- Verbos válidos: `get`, `list`, `create`, `update`, `delete`, `validate`
-- Exemplos: `analytics_get_campaign_metrics`, `tenant_list_active`
+- Format: `{domain}_{verb}_{resource}`
+- Valid verbs: `get`, `list`, `create`, `update`, `delete`, `validate`
+- Examples: `analytics_get_campaign_metrics`, `tenant_list_active`
 
 ---
 
 ## Security Principles
 
-### Regras Absolutas
+### Absolute Rules
 
-- Zero secrets em código — sempre variáveis de ambiente via `.env`
-- Zero SQL por concatenação de string — sempre queries parametrizadas ou ORM
-- Zero dados de usuário em logs — mascarar PII antes de logar
-- Zero endpoints sem autenticação (exceto rotas públicas explícitas)
-- Zero confiança em input do cliente — validar e sanitizar no servidor
+- Zero secrets in code — always environment variables via `.env`
+- Zero SQL string concatenation — always parameterized queries or ORM
+- Zero user data in logs — mask PII before logging
+- Zero unauthenticated endpoints (except explicitly public routes)
+- Zero trust on client input — validate and sanitize on the server
 
-### Autenticação e Autorização
+### Authentication and Authorization
 
-- Auth verificada antes de qualquer lógica de negócio
-- Tokens com TTL definido e refresh tokens rotacionados
-- Rate limiting em endpoints de autenticação
-- Senhas hashadas com bcrypt/argon2 — nunca MD5/SHA1
+- Auth verified before any business logic
+- Tokens with defined TTL and rotated refresh tokens
+- Rate limiting on authentication endpoints
+- Passwords hashed with bcrypt/argon2 — never MD5/SHA1
 
-### Multi-tenancy (quando aplicável)
+### Multi-tenancy (when applicable)
 
-- Tenant ID validado no servidor, nunca confiado do cliente
-- Row-level security em tabelas multi-tenant
-- Logs segregados por tenant
-- Zero acesso cruzado entre tenants
+- Tenant ID validated on the server, never trusted from the client
+- Row-level security on multi-tenant tables
+- Logs segregated by tenant
+- Zero cross-tenant access
 
-### Dependências
+### Dependencies
 
-- Dependências auditadas antes de adicionar (`npm audit` / `pip-audit`)
-- HTTPS obrigatório em todos os ambientes
-- Headers de segurança: CSP, HSTS, X-Frame-Options
-- CORS restrito a origens explícitas
-- Dependabot habilitado para atualizações automáticas
+- Dependencies audited before adding (`npm audit` / `pip-audit`)
+- HTTPS mandatory in all environments
+- Security headers: CSP, HSTS, X-Frame-Options
+- CORS restricted to explicit origins
+- Dependabot enabled for automatic updates
 
 ---
 
 ## MCP Architecture Principles
 
-### Quando criar um MCP Server
+### When to create an MCP Server
 
-- Quando um módulo expõe **dados ou ferramentas que uma LLM precisa acessar**
-- Quando usuários finais interagem com dados via linguagem natural
-- **Não criar** para: pipelines de ingestão, auth internals, jobs batch, CRON
+- When a module exposes **data or tools that an LLM needs to access**
+- When end users interact with data via natural language
+- **Do not create** for: ingestion pipelines, auth internals, batch jobs, CRON
 
-### Design de Tools
+### Tool Design
 
-- Cada tool tem responsabilidade única
-- Tools de leitura não têm credenciais de escrita
-- Toda tool documenta: descrição, parâmetros, retorno, erros, permissão mínima
-- Tenant isolation validado dentro de cada tool
+- Each tool has a single responsibility
+- Read tools do not hold write credentials
+- Every tool documents: description, parameters, return value, errors, minimum permission
+- Tenant isolation validated inside each tool
 
-### Registro
+### Registry
 
-- Toda tool registrada em `docs/mcp-contracts.md` **antes** de implementada
-- MCP server por domínio, não monolítico
+- Every tool registered in `docs/mcp-contracts.md` **before** implementation
+- One MCP server per domain, not monolithic
 
 ---
 
-## Qualidade de Código
+## Code Quality
 
-### Lint e Formatting
+### Lint and Formatting
 
-- **TypeScript/React**: Biome (substitui ESLint + Prettier)
-- **Python**: Ruff (substitui Black + isort + Flake8)
-- Executados automaticamente em pre-commit e CI
-- Zero warnings aceitos em PR
+- **TypeScript/React**: Biome (replaces ESLint + Prettier)
+- **Python**: Ruff (replaces Black + isort + Flake8)
+- Run automatically on pre-commit and CI
+- Zero warnings accepted in a PR
 
-### Testes
+### Testing
 
-- Framework definido por projeto (Vitest / Pytest recomendados)
-- Testes obrigatórios para lógica de negócio e autenticação
-- Testes de integração para endpoints críticos
-- Coverage mínimo definido por projeto no `plan.md`
+- Framework defined per project (Vitest / Pytest recommended)
+- Tests required for business logic and authentication
+- Integration tests for critical endpoints
+- Minimum coverage defined per project in `plan.md`
 
 ### Conventional Commits
 
-Formato: `type(scope): description`
+Format: `type(scope): description`
 
-Tipos válidos: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `ci`, `perf`, `security`
+Valid types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `ci`, `perf`, `security`
 
-Exemplos:
+Examples:
 - `feat(auth): add JWT refresh token rotation`
 - `fix(dashboard): resolve tenant data leak in filter query`
 - `docs(mcp): update analytics tool contract`
@@ -142,36 +152,36 @@ Exemplos:
 
 ### Changelog
 
-- Gerado automaticamente via Conventional Commits
-- Formato: Keep a Changelog (https://keepachangelog.com)
-- Agrupado por tipo de mudança, não por data
-- Mantido por feature, acumulado no release
+- Generated automatically via Conventional Commits
+- Format: Keep a Changelog (https://keepachangelog.com)
+- Grouped by change type, not by date
+- Maintained per feature, accumulated at release
 
 ---
 
 ## Workflow Rules
 
-### Issues e Rastreabilidade
+### Issues and Traceability
 
-- 1 GitHub Issue = 1 task do Spec Kit
+- 1 GitHub Issue = 1 Spec Kit task
 - Milestone = feature/epic
-- Subtasks = checklist interno da Issue
-- Todo PR referencia a Issue: `closes #N`
+- Subtasks = internal Issue checklist
+- Every PR references the Issue: `closes #N`
 
 ### Worktrees
 
-- Toda task executada em worktree isolado
-- Merge com `--no-ff` para preservar histórico
-- Worktree removido após merge confirmado
+- Every task executed in an isolated worktree
+- Merge with `--no-ff` to preserve history
+- Worktree removed after merge is confirmed
 
 ### Rollback
 
-- Tags criadas por feature no main: `v{feature}-done`
-- Rollback via `git revert` no merge commit
-- Nunca `git reset --hard` no main
+- Tags created per feature on main: `v{feature}-done`
+- Rollback via `git revert` on the merge commit
+- Never `git reset --hard` on main
 
 ---
 
-## Decisões de Stack
+## Stack Decisions
 
-Stack é definido por projeto na fase `/speckit.plan`. O template `docs/ARCHITECTURE-DECISIONS.md` guia as decisões. Esta constitution não prescreve ferramentas — prescreve **práticas**.
+Stack is defined per project during the `/speckit.plan` phase. The `docs/ARCHITECTURE-DECISIONS.md` template guides those decisions. This constitution does not prescribe tools — it prescribes **practices**.

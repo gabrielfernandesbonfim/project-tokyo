@@ -1,9 +1,9 @@
 # Changelog
 
-Todas as mudanças notáveis neste projeto serão documentadas aqui.
+All notable changes to this project will be documented here.
 
-Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/),
-e este projeto adere a [Conventional Commits](https://www.conventionalcommits.org/).
+Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Conventional Commits](https://www.conventionalcommits.org/).
 
 ## [Unreleased]
 

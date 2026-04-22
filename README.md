@@ -1,102 +1,106 @@
 # Project Tokyo
 
-Framework de desenvolvimento AI-driven para projetos web. Combina **Spec Kit** (spec-driven development) com **Claude Code CLI** para criar um workflow reproduzível, seguro e escalável.
+AI-driven development framework for web projects. Combines **Spec Kit** (spec-driven development) with the **Claude Code CLI** to produce a reproducible, secure, and scalable workflow.
 
-## O que é
+## What it is
 
-Um repositório template no GitHub. Para cada novo projeto, faça **Use this template** e comece com toda a estrutura pronta: constitution, CLAUDE.md, CI/CD, settings, e o workflow spec → plan → tasks → implement do Spec Kit.
+A GitHub template repository. For each new project, click **Use this template** and start with the full structure ready: constitution, CLAUDE.md, CI/CD, settings, and the Spec Kit spec → plan → tasks → implement workflow.
 
-## Stack do Framework (não do projeto)
+## Framework Stack (not the project's)
 
-O framework é agnóstico a stack. Cada projeto define suas ferramentas na fase de arquitetura (`/speckit.plan`). O que o Tokyo padroniza:
+The framework is stack-agnostic. Each project defines its tools during the architecture phase (`/speckit.plan`). What Tokyo standardizes:
 
-- **Metodologia**: Spec Kit (GitHub) — spec-driven development
-- **Agente**: Claude Code CLI com skills (`--ai-skills`)
-- **Versionamento**: Git + GitHub (Issues, PRs, Actions)
-- **Qualidade**: Biome (JS/TS) + Ruff (Python) — lint e formatting automáticos
-- **Testes**: Vitest (JS/TS) + Pytest (Python) — definidos por projeto
+- **Methodology**: Spec Kit (GitHub) — spec-driven development
+- **Agent**: Claude Code CLI with skills (`--ai-skills`)
+- **Versioning**: Git + GitHub (Issues, PRs, Actions)
+- **Quality**: Biome (JS/TS) + Ruff (Python) — automatic lint and formatting
+- **Testing**: Vitest (JS/TS) + Pytest (Python) — defined per project
 - **CI/CD**: GitHub Actions — lint → test → security scan
-- **Segurança**: gitleaks (pre-commit), Dependabot, npm audit / pip-audit
+- **Security**: gitleaks (pre-commit), Dependabot, npm audit / pip-audit
 
 ## Quickstart
 
 ```bash
-# 1. Pré-requisitos (executar dentro do WSL ou Linux)
+# 1. Prerequisites (run inside WSL or Linux)
 git --version          # 2.5+
 node --version         # 24 LTS
 python3 --version      # 3.13
-gh auth login          # GitHub CLI autenticado
+gh auth login          # GitHub CLI authenticated
 npm install -g @anthropic-ai/claude-code
 
-# 2. Instalar Spec Kit CLI
+# 2. Install Spec Kit CLI
 uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
 
-# 3. Criar projeto a partir do template
-# → No GitHub, clique "Use this template" neste repo
-# → Clone o novo repo localmente
+# 3. Create project from the template
+# → On GitHub, click "Use this template" on this repo
+# → Clone the new repo locally
 
-# 4. Inicializar Spec Kit
-cd meu-projeto
+# 4. Initialize Spec Kit
+cd my-project
 specify init . --ai claude --ai-skills --force
 
-# 5. Copiar settings de usuário (uma vez por máquina)
+# 5. Copy user settings (once per machine)
 cp docs/claude-settings-user.json ~/.claude/settings.json
 
-# 6. Abrir Claude Code e começar
+# 6. Open Claude Code and start
 claude
 ```
 
-## Workflow Resumido
+## Workflow Summary
 
 ```
-/speckit.constitution  →  Definir princípios do projeto
-/speckit.specify       →  Descrever O QUÊ e POR QUÊ (sem tech stack)
-/speckit.clarify       →  Resolver ambiguidades
-/speckit.plan          →  Definir HOW: stack, arquitetura, MCP surface
-/speckit.tasks         →  Gerar tasks com checklists de segurança
-/speckit.analyze       →  Validar consistência entre artefatos
-/speckit.implement     →  Executar task por task com worktrees isolados
+/speckit.constitution  →  Define project principles
+/speckit.specify       →  Describe WHAT and WHY (no tech stack)
+/speckit.clarify       →  Resolve ambiguities
+/speckit.plan          →  Define HOW: stack, architecture, MCP surface
+/speckit.tasks         →  Generate tasks with security checklists
+/speckit.analyze       →  Validate consistency across artifacts
+/speckit.implement     →  Execute task by task in isolated worktrees
 ```
 
-## Estrutura do Repositório
+## Repository Structure
 
 ```
 project-tokyo/
 ├── .claude/
-│   └── settings.json          # Settings de projeto (commitado)
+│   └── settings.json          # Project settings (committed)
 ├── .github/
 │   └── workflows/
 │       └── ci.yml             # CI: lint, test, security
 ├── docs/
-│   ├── QUICKSTART.md          # Passo a passo detalhado
-│   ├── ARCHITECTURE-DECISIONS.md  # Template de decisões por projeto
-│   ├── claude-settings-user.json  # Settings de usuário (copiar p/ ~/.claude/)
-│   └── mcp-contracts.md       # Template de contratos MCP
-├── .env.example               # Chaves sem valores — documentação de envs
+│   ├── QUICKSTART.md          # Detailed step-by-step guide
+│   ├── ARCHITECTURE-DECISIONS.md  # Per-project decisions template
+│   ├── claude-settings-user.json  # User settings (copy to ~/.claude/)
+│   └── mcp-contracts.md       # MCP contracts template
+├── .env.example               # Keys without values — env documentation
 ├── .gitignore
-├── .pre-commit-config.yaml    # gitleaks + formatação
-├── CLAUDE.md                  # Instruções para o agente
-├── constitution.md            # → movido para .specify/ após specify init
+├── .pre-commit-config.yaml    # gitleaks + formatting
+├── CLAUDE.md                  # Agent instructions
+├── constitution.md            # → moved to .specify/ after specify init
 └── README.md
 ```
 
-> **Nota**: Após `specify init`, a constitution vai para `.specify/memory/constitution.md`. O arquivo `constitution.md` na raiz é o template — copie o conteúdo para lá.
+> **Note**: After `specify init`, the constitution moves to `.specify/memory/constitution.md`. The `constitution.md` file at the root is the template — copy its contents there.
 
-## Documentação
+## Documentation
 
-- **[QUICKSTART.md](docs/QUICKSTART.md)** — Guia completo de setup e uso
-- **[ARCHITECTURE-DECISIONS.md](docs/ARCHITECTURE-DECISIONS.md)** — Template para decisões de stack
-- **[mcp-contracts.md](docs/mcp-contracts.md)** — Template de contratos MCP
+- **[QUICKSTART.md](docs/QUICKSTART.md)** — Full setup and usage guide
+- **[ARCHITECTURE-DECISIONS.md](docs/ARCHITECTURE-DECISIONS.md)** — Stack decisions template
+- **[mcp-contracts.md](docs/mcp-contracts.md)** — MCP contracts template
 
-## Versões recomendadas
+## Language Policy
 
-| Ferramenta | Versão | Motivo |
+All project artifacts written to disk — `.md` files, configuration, code comments, commit messages, issue/PR descriptions, spec/task files — must be in **English**, regardless of the spoken/chat language used with the agent. Rationale: English yields the best LLM performance (largest training corpus, cleanest tokenization) and gives shared tooling a consistent vocabulary. See `constitution.md` for the full rule.
+
+## Recommended Versions
+
+| Tool | Version | Reason |
 |---|---|---|
-| Node.js | 24 LTS | Suporte até abril 2028 |
-| Python | 3.13 | Estável, compatibilidade total com libs |
+| Node.js | 24 LTS | Supported until April 2028 |
+| Python | 3.13 | Stable, full library compatibility |
 | Git | 2.5+ | Worktree support |
-| uv | latest | Package manager para Spec Kit |
+| uv | latest | Package manager for Spec Kit |
 
-## Licença
+## License
 
-Definir por projeto.
+Defined per project.

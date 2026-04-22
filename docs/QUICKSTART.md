@@ -1,15 +1,15 @@
 # Quickstart — Project Tokyo
 
-Guia passo a passo: do zero ao primeiro `specify init`.
+Step-by-step guide: from zero to your first `specify init`.
 
 ---
 
-## 1. Pré-requisitos
+## 1. Prerequisites
 
 ### Node.js 24 LTS
 
 ```bash
-# Instalar via nvm (recomendado)
+# Install via nvm (recommended)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 source ~/.bashrc
 nvm install 24
@@ -26,7 +26,7 @@ sudo apt install python3.13 python3.13-venv python3-pip
 python3 --version  # 3.13.x
 ```
 
-### uv (package manager para Spec Kit)
+### uv (package manager for Spec Kit)
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -46,7 +46,7 @@ git --version
 ```bash
 sudo apt install gh
 gh auth login
-# Seguir o fluxo interativo (GitHub.com → HTTPS → Login with browser)
+# Follow the interactive flow (GitHub.com → HTTPS → Login with browser)
 ```
 
 ### Claude Code CLI
@@ -56,95 +56,100 @@ npm install -g @anthropic-ai/claude-code
 claude --version
 ```
 
-### Ferramentas de qualidade
+### Quality tools
 
 ```bash
-# Biome (lint + format para JS/TS)
+# Biome (lint + format for JS/TS)
 npm install -g @biomejs/biome
 
-# Ruff (lint + format para Python)
+# Ruff (lint + format for Python)
 uv tool install ruff
 
-# gitleaks (detecção de secrets)
-# Baixar binário de https://github.com/gitleaks/gitleaks/releases
-# Ou via snap:
+# gitleaks (secrets detection)
+# Download binary from https://github.com/gitleaks/gitleaks/releases
+# Or via snap:
 sudo snap install gitleaks
 
-# pre-commit (hooks automáticos)
+# pre-commit (automatic hooks)
 uv tool install pre-commit
 ```
 
 ---
 
-## 2. Configurar Claude Code (uma vez por máquina)
+## 2. Configure Claude Code (once per machine)
 
 ```bash
-# Copiar settings de usuário
+# Copy user settings
 mkdir -p ~/.claude
 cp docs/claude-settings-user.json ~/.claude/settings.json
 ```
 
-O settings de usuário define:
-- **Modelo padrão**: Sonnet (trocar para Opus manualmente com `/model opus` quando precisar)
-- **Permissões deny**: bloqueia comandos destrutivos
-- **Permissões allow**: libera ferramentas de desenvolvimento sem pedir confirmação
-- **Telemetria desabilitada**
+> **Warning**: This overwrites any existing `~/.claude/settings.json`. Back it up first if you have customizations.
 
-Para usar Opus: `/model opus` dentro do Claude Code (planejamento, arquitetura, decisões complexas).
-Para extended thinking: adicionar `ultrathink` na mensagem quando necessário.
+The user settings define:
+- **Default model**: Sonnet (switch to Opus manually with `/model opus` when needed)
+- **Deny permissions**: blocks destructive commands
+- **Allow permissions**: unlocks development tools without confirmation prompts
+- **Telemetry disabled**
+
+To use Opus: `/model opus` inside Claude Code (planning, architecture, complex decisions).
+For extended thinking: add `ultrathink` to your message when needed.
 
 ---
 
-## 3. Criar novo projeto
+## 3. Create a new project
 
-### Opção A: Via GitHub (recomendado)
+### Option A: Via GitHub (recommended)
 
-1. Ir em `github.com/{seu-user}/project-tokyo`
-2. Clicar **Use this template** → **Create a new repository**
-3. Nomear o repositório
-4. Clonar localmente:
+1. Go to `github.com/{your-user}/project-tokyo`
+2. Click **Use this template** → **Create a new repository**
+3. Name the repository
+4. Clone locally:
 
 ```bash
-git clone git@github.com:{seu-user}/{novo-projeto}.git
-cd {novo-projeto}
+git clone git@github.com:{your-user}/{new-project}.git
+cd {new-project}
 ```
 
-### Opção B: Manual
+### Option B: Manual
 
 ```bash
-# Clonar o template
-git clone git@github.com:{seu-user}/project-tokyo.git {novo-projeto}
-cd {novo-projeto}
+# Clone the template
+git clone git@github.com:{your-user}/project-tokyo.git {new-project}
+cd {new-project}
 
-# Remover origin do template e apontar para novo repo
+# Remove template origin and point to new repo
 git remote remove origin
-git remote add origin git@github.com:{seu-user}/{novo-projeto}.git
+git remote add origin git@github.com:{your-user}/{new-project}.git
 ```
 
 ---
 
-## 4. Inicializar Spec Kit
+## 4. Initialize Spec Kit
 
 ```bash
-cd {novo-projeto}
+cd {new-project}
 
-# Inicializar com Claude Code + skills
+# Initialize with Claude Code + skills
 specify init . --ai claude --ai-skills --force
 
-# Verificar instalação
+# Verify installation
 specify check
 ```
 
-O `--force` é seguro aqui porque o template já contém os arquivos base. O Spec Kit vai adicionar sua estrutura `.specify/` e `.claude/commands/` (ou skills) sem apagar o que já existe.
+`--force` is safe here because the template already contains the base files. Spec Kit adds its `.specify/` and `.claude/commands/` (or skills) structure without overwriting existing files.
 
-### Mover constitution para o Spec Kit
+### Move the constitution to Spec Kit
 
 ```bash
-# Copiar o template de constitution para onde o Spec Kit espera
+# Copy the constitution template to where Spec Kit expects it
 cp constitution.md .specify/memory/constitution.md
+
+# The root constitution.md is now redundant — remove it
+rm constitution.md
 ```
 
-### Configurar pre-commit hooks
+### Set up pre-commit hooks
 
 ```bash
 pre-commit install
@@ -152,134 +157,134 @@ pre-commit install
 
 ---
 
-## 5. Iniciar desenvolvimento
+## 5. Start development
 
 ```bash
-# Abrir Claude Code
+# Open Claude Code
 claude
 
-# --- Fase de Conceito (usar /model opus) ---
+# --- Concept phase (use /model opus) ---
 
 /model opus
 
-# Definir os princípios do projeto
+# Define project principles
 /speckit.constitution
 
-# Descrever O QUÊ você quer construir e POR QUÊ
-# NÃO falar de tech stack aqui
+# Describe WHAT you want to build and WHY
+# Do NOT talk about tech stack here
 /speckit.specify
 
-# Resolver ambiguidades
+# Resolve ambiguities
 /speckit.clarify
 
-# --- Fase de Planejamento (continuar em Opus) ---
+# --- Planning phase (stay on Opus) ---
 
-# Definir HOW: stack, arquitetura, banco, auth, deploy
-# Aqui é onde as decisões de ferramentas acontecem
-# Consultar docs/ARCHITECTURE-DECISIONS.md como guia
+# Define HOW: stack, architecture, database, auth, deploy
+# This is where tool decisions are made
+# Consult docs/ARCHITECTURE-DECISIONS.md as a guide
 /speckit.plan
 
-# Validar consistência
+# Validate consistency
 /speckit.analyze
 
-# --- Fase de Execução (trocar para Sonnet) ---
+# --- Execution phase (switch to Sonnet) ---
 
 /model sonnet
 
-# Gerar tasks com checklists
+# Generate tasks with checklists
 /speckit.tasks
 
-# Implementar task por task
+# Implement task by task
 /speckit.implement
 ```
 
 ---
 
-## 6. Workflow de execução (por task)
+## 6. Execution workflow (per task)
 
-Cada task segue este ciclo:
+Each task follows this cycle:
 
 ```bash
-# 1. Criar worktree isolado
-git worktree add ../{projeto}-{feature}-{task} -b feature/{feature}/{task}
-cd ../{projeto}-{feature}-{task}
+# 1. Create isolated worktree
+git worktree add ../{project}-{feature}-{task} -b feature/{feature}/{task}
+cd ../{project}-{feature}-{task}
 
-# 2. Implementar (dentro do Claude Code)
+# 2. Implement (inside Claude Code)
 claude
-# → trabalhar na task
+# → work on the task
 
-# 3. Validar
-# → lint passa (biome check / ruff check)
-# → testes passam (vitest / pytest)
+# 3. Validate
+# → lint passes (biome check / ruff check)
+# → tests pass (vitest / pytest)
 # → security checklist OK
 
-# 4. Commitar
+# 4. Commit
 git add .
 git commit -m "feat(scope): description"
 
-# 5. Merge no branch da feature
-cd ../{projeto}
-git merge feature/{feature}/{task} --no-ff -m "task({numero}): {nome}"
+# 5. Merge into feature branch
+cd ../{project}
+git merge feature/{feature}/{task} --no-ff -m "task({number}): {name}"
 
-# 6. Limpar
-git worktree remove ../{projeto}-{feature}-{task}
+# 6. Clean up
+git worktree remove ../{project}-{feature}-{task}
 git branch -d feature/{feature}/{task}
 ```
 
 ---
 
-## 7. Fechar feature
+## 7. Close a feature
 
 ```bash
-# Atualizar docs
-# → architecture.md, modules/{modulo}.md, mcp-contracts.md
+# Update docs
+# → architecture.md, modules/{module}.md, mcp-contracts.md
 
-# Criar PR
+# Create PR
 gh pr create \
-  --title "feat({numero}): {nome da feature}" \
+  --title "feat({number}): {feature name}" \
   --body "Closes #{issue-number}" \
   --base main \
   --head feature/{feature}
 
-# Aguardar revisão e aprovar manualmente
-# NUNCA merge automático no main
+# Wait for review and approve manually
+# NEVER auto-merge to main
 ```
 
 ---
 
-## 8. Gestão de secrets
+## 8. Secrets management
 
 ```bash
-# .env.example está commitado — documenta as chaves necessárias
-# .env.local NÃO está commitado — contém valores reais
+# .env.example is committed — documents the required keys
+# .env.local is NOT committed — contains real values
 
 cp .env.example .env.local
-# Editar .env.local com os valores reais
+# Edit .env.local with real values
 
-# Para CI/CD, usar GitHub Secrets:
+# For CI/CD, use GitHub Secrets:
 gh secret set DATABASE_URL
 gh secret set API_KEY
-# (valores ficam no GitHub, não no código)
+# (values live in GitHub, not in code)
 ```
 
-Para sincronizar entre máquinas: `.env.local` deve ser transferido manualmente (via gerenciador de senhas, USB, ou cloud pessoal segura). Nunca commitar.
+To sync between machines: `.env.local` must be transferred manually (via password manager, USB, or secure personal cloud). Never commit it.
 
 ---
 
-## Referência rápida de comandos
+## Quick command reference
 
-| Ação | Comando |
+| Action | Command |
 |---|---|
-| Trocar modelo | `/model opus` ou `/model sonnet` |
-| Extended thinking | Adicionar `ultrathink` na mensagem |
-| Ver worktrees | `git worktree list` |
-| Criar worktree | `git worktree add ../{nome} -b {branch}` |
-| Remover worktree | `git worktree remove ../{nome}` |
-| Rodar lint JS/TS | `npx biome check .` |
-| Rodar lint Python | `ruff check .` |
-| Rodar testes JS/TS | `npx vitest run` |
-| Rodar testes Python | `pytest` |
-| Scan de secrets | `gitleaks detect` |
-| Criar issue | `gh issue create` |
-| Criar PR | `gh pr create` |
-| Fechar issue | `gh issue close {N}` |
+| Switch model | `/model opus` or `/model sonnet` |
+| Extended thinking | Add `ultrathink` to the message |
+| List worktrees | `git worktree list` |
+| Create worktree | `git worktree add ../{name} -b {branch}` |
+| Remove worktree | `git worktree remove ../{name}` |
+| Run JS/TS lint | `npx biome check .` |
+| Run Python lint | `ruff check .` |
+| Run JS/TS tests | `npx vitest run` |
+| Run Python tests | `pytest` |
+| Scan for secrets | `gitleaks detect` |
+| Create issue | `gh issue create` |
+| Create PR | `gh pr create` |
+| Close issue | `gh issue close {N}` |

@@ -1,110 +1,110 @@
-# Decisões de Arquitetura — {NOME DO PROJETO}
+# Architecture Decisions — {PROJECT NAME}
 
-> Preencher durante `/speckit.plan`. Cada decisão deve ser justificada.
-> Este documento é a referência para todas as escolhas técnicas do projeto.
+> Fill in during `/speckit.plan`. Every decision must be justified.
+> This document is the reference for all technical choices in the project.
 
 ---
 
 ## 1. Frontend
 
-| Decisão | Opções Consideradas | Escolha | Justificativa |
+| Decision | Options Considered | Choice | Rationale |
 |---|---|---|---|
-| Framework | Next.js, Remix, Nuxt, SvelteKit | {escolha} | {motivo} |
-| Styling | Tailwind, CSS Modules, Styled Components | {escolha} | {motivo} |
-| State management | Zustand, Jotai, Redux Toolkit, Context | {escolha} | {motivo} |
-| Forms | React Hook Form, Formik, native | {escolha} | {motivo} |
+| Framework | Next.js, Remix, Nuxt, SvelteKit | {choice} | {reason} |
+| Styling | Tailwind, CSS Modules, Styled Components | {choice} | {reason} |
+| State management | Zustand, Jotai, Redux Toolkit, Context | {choice} | {reason} |
+| Forms | React Hook Form, Formik, native | {choice} | {reason} |
 
 ## 2. Backend
 
-| Decisão | Opções Consideradas | Escolha | Justificativa |
+| Decision | Options Considered | Choice | Rationale |
 |---|---|---|---|
-| Runtime/Framework | Next.js API Routes, FastAPI, Express, Hono | {escolha} | {motivo} |
-| ORM/Query builder | Prisma, Drizzle, SQLAlchemy, Knex | {escolha} | {motivo} |
-| Validação | Zod, Pydantic, Joi | {escolha} | {motivo} |
+| Runtime/Framework | Next.js API Routes, FastAPI, Express, Hono | {choice} | {reason} |
+| ORM/Query builder | Prisma, Drizzle, SQLAlchemy, Knex | {choice} | {reason} |
+| Validation | Zod, Pydantic, Joi | {choice} | {reason} |
 
-## 3. Banco de Dados
+## 3. Database
 
-| Decisão | Opções Consideradas | Escolha | Justificativa |
+| Decision | Options Considered | Choice | Rationale |
 |---|---|---|---|
-| Banco principal | Supabase (Postgres), Neon, Turso, PlanetScale | {escolha} | {motivo} |
-| Warehouse/Analytics | BigQuery, ClickHouse, DuckDB/MotherDuck | {escolha} | {motivo} |
-| Cache | Redis, Upstash, in-memory | {escolha} | {motivo} |
+| Primary database | Supabase (Postgres), Neon, Turso, PlanetScale | {choice} | {reason} |
+| Warehouse/Analytics | BigQuery, ClickHouse, DuckDB/MotherDuck | {choice} | {reason} |
+| Cache | Redis, Upstash, in-memory | {choice} | {reason} |
 
-### Comparativo de bancos (referência)
+### Database comparison (reference)
 
-**Postgres managed**:
-- **Supabase**: Auth + DB + Storage + Realtime integrados. Free tier generoso (500MB). Melhor para MVPs que precisam de auth rápido. Custo sobe com MAUs.
-- **Neon**: Postgres serverless puro, scale-to-zero. Mais barato em produção baixa-média. Sem auth built-in. Branching de banco para dev/preview.
-- **Railway**: Postgres simples, bom DX. Sem diferenciais grandes. Bom para protótipos.
+**Managed Postgres**:
+- **Supabase**: Auth + DB + Storage + Realtime integrated. Generous free tier (500MB). Best for MVPs that need fast auth. Cost scales with MAUs.
+- **Neon**: Pure serverless Postgres, scale-to-zero. Cheaper at low-to-medium production usage. No built-in auth. Database branching for dev/preview environments.
+- **Railway**: Simple Postgres, good DX. No major differentiators. Good for prototypes.
 
 **Analytics/Warehouse**:
-- **DuckDB/MotherDuck**: Analytics local ou serverless. Custo muito baixo. Ideal para dados < 100GB. Sem infraestrutura para gerenciar.
-- **ClickHouse Cloud**: Alto volume, queries rápidas. Mais complexo de operar.
-- **BigQuery**: Ecossistema Google. Pay-per-query. Ideal se já usa GCP para tudo.
+- **DuckDB/MotherDuck**: Local or serverless analytics. Very low cost. Ideal for data < 100GB. No infrastructure to manage.
+- **ClickHouse Cloud**: High volume, fast queries. More complex to operate.
+- **BigQuery**: Google ecosystem. Pay-per-query. Ideal if already on GCP.
 
-## 4. Autenticação
+## 4. Authentication
 
-| Decisão | Opções Consideradas | Escolha | Justificativa |
+| Decision | Options Considered | Choice | Rationale |
 |---|---|---|---|
-| Provider | Supabase Auth, Clerk, Auth.js, WorkOS | {escolha} | {motivo} |
-| Estratégia | JWT, Session, OAuth2 | {escolha} | {motivo} |
-| Multi-tenancy | RLS, Schema per tenant, App-level | {escolha} | {motivo} |
+| Provider | Supabase Auth, Clerk, Auth.js, WorkOS | {choice} | {reason} |
+| Strategy | JWT, Session, OAuth2 | {choice} | {reason} |
+| Multi-tenancy | RLS, Schema per tenant, App-level | {choice} | {reason} |
 
-### Comparativo de auth (referência)
+### Auth comparison (reference)
 
-- **Supabase Auth**: Grátis, integrado com Supabase DB. RLS nativo. Bom para projetos já em Supabase.
-- **Clerk**: Melhor DX, componentes prontos, pago após 10k MAU. Bom para SaaS.
-- **Auth.js / NextAuth**: Open-source, self-hosted. Mais trabalho, mais controle.
-- **WorkOS**: B2B/SSO desde o início. Enterprise-ready. Pago.
+- **Supabase Auth**: Free, integrated with Supabase DB. Native RLS. Best for projects already on Supabase.
+- **Clerk**: Best DX, ready-made components, paid after 10k MAU. Good for SaaS.
+- **Auth.js / NextAuth**: Open-source, self-hosted. More work, more control.
+- **WorkOS**: B2B/SSO from day one. Enterprise-ready. Paid.
 
 ## 5. Deploy
 
-| Decisão | Opções Consideradas | Escolha | Justificativa |
+| Decision | Options Considered | Choice | Rationale |
 |---|---|---|---|
-| Frontend | Vercel, Netlify, Cloudflare Pages | {escolha} | {motivo} |
-| Backend Python | Cloud Run (GCP), Railway, Fly.io | {escolha} | {motivo} |
-| CI/CD | GitHub Actions | GitHub Actions | Padrão Tokyo |
+| Frontend | Vercel, Netlify, Cloudflare Pages | {choice} | {reason} |
+| Python backend | Cloud Run (GCP), Railway, Fly.io | {choice} | {reason} |
+| CI/CD | GitHub Actions | GitHub Actions | Tokyo standard |
 
-### Comparativo de deploy (referência)
+### Deploy comparison (reference)
 
 **Frontend**:
-- **Vercel**: Zero config para Next.js. Preview deploys. Free tier generoso. Padrão recomendado.
-- **Netlify**: Similar ao Vercel, melhor para sites estáticos. Menos features para Next.js.
-- **Cloudflare Pages**: Mais barato em escala, edge-first. DX inferior.
+- **Vercel**: Zero config for Next.js. Preview deploys. Generous free tier. Recommended default.
+- **Netlify**: Similar to Vercel, better for static sites. Fewer features for Next.js.
+- **Cloudflare Pages**: Cheaper at scale, edge-first. Inferior DX.
 
-**Backend Python**:
-- **Cloud Run (GCP)**: Container-based, scale-to-zero, pay-per-use. Recomendado se já usa GCP.
-- **Railway**: Simples, bom DX. Mais caro que Cloud Run em produção.
-- **Fly.io**: Edge deploy, bom para latência global. Mais complexo de configurar.
+**Python backend**:
+- **Cloud Run (GCP)**: Container-based, scale-to-zero, pay-per-use. Recommended if already on GCP.
+- **Railway**: Simple, good DX. More expensive than Cloud Run in production.
+- **Fly.io**: Edge deploy, good for global latency. More complex to configure.
 
 ## 6. MCP Surface
 
-> Quais módulos expõem tools para agentes ou usuários via linguagem natural?
+> Which modules expose tools for agents or users via natural language?
 
-| Módulo | Tem MCP? | Justificativa |
+| Module | Has MCP? | Rationale |
 |---|---|---|
-| {modulo} | Sim/Não | {motivo} |
+| {module} | Yes/No | {reason} |
 
-Regra: MCP só para módulos onde uma LLM precisa acessar dados ou executar ações.
-Nunca para: pipelines de ingestão, auth internals, jobs batch.
+Rule: MCP only for modules where an LLM needs to access data or execute actions.
+Never for: ingestion pipelines, auth internals, batch jobs.
 
-## 7. Monitoramento e Observabilidade
+## 7. Monitoring and Observability
 
-| Decisão | Opções Consideradas | Escolha | Justificativa |
+| Decision | Options Considered | Choice | Rationale |
 |---|---|---|---|
-| Error tracking | Sentry, BetterStack, LogRocket | {escolha} | {motivo} |
-| Logging | Pino, Winston, structlog (Python) | {escolha} | {motivo} |
-| Uptime | BetterStack, Checkly | {escolha} | {motivo} |
+| Error tracking | Sentry, BetterStack, LogRocket | {choice} | {reason} |
+| Logging | Pino, Winston, structlog (Python) | {choice} | {reason} |
+| Uptime | BetterStack, Checkly | {choice} | {reason} |
 
 ---
 
-## Checklist de Decisões
+## Decisions Checklist
 
-- [ ] Frontend framework definido
-- [ ] Backend framework definido
-- [ ] Banco de dados principal escolhido
-- [ ] Autenticação definida
-- [ ] Deploy target definido
-- [ ] MCP surface mapeada
-- [ ] Monitoramento planejado
-- [ ] Todas as decisões justificadas
+- [ ] Frontend framework defined
+- [ ] Backend framework defined
+- [ ] Primary database chosen
+- [ ] Authentication defined
+- [ ] Deploy target defined
+- [ ] MCP surface mapped
+- [ ] Monitoring planned
+- [ ] All decisions justified

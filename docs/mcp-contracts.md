@@ -1,29 +1,29 @@
 # MCP Contracts
 
-> Registro central de todos os MCP servers e tools do projeto.
-> Atualizar **antes** de implementar qualquer nova tool.
+> Central registry of all MCP servers and tools in the project.
+> Update **before** implementing any new tool.
 
 ---
 
-## Servers Registrados
+## Registered Servers
 
-| Server | Domínio | Arquivo | Status |
+| Server | Domain | File | Status |
 |---|---|---|---|
-| {nome}-server | {domínio} | mcp/servers/{nome}-server.py | planned / active |
+| {name}-server | {domain} | mcp/servers/{name}-server.py | planned / active |
 
 ---
 
-## {domínio}
+## {domain}
 
-### {dominio}_{verbo}_{recurso}
+### {domain}_{verb}_{resource}
 
-- **Descrição**: {o que a tool faz}
+- **Description**: {what the tool does}
 - **Input**: `{ param: type }`
-- **Output**: `{ campo: type }`
-- **Erros**: `ERROR_CODE_1`, `ERROR_CODE_2`
-- **Permissão**: read-only / read-write / admin
-- **Tenant Isolation**: {como o tenant_id é validado}
+- **Output**: `{ field: type }`
+- **Errors**: `ERROR_CODE_1`, `ERROR_CODE_2`
+- **Permission**: read-only / read-write / admin
+- **Tenant Isolation**: {how the tenant_id is validated}
 
 ---
 
-> Copiar o bloco acima para cada nova tool. Manter ordenado por domínio.
+> Copy the block above for each new tool. Keep sorted by domain.
