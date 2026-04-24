@@ -1,0 +1,40 @@
+{
+  "_comment": "Reference template — copy stanzas into .mcp.json as needed. `${VAR}` expands from environment (or .env). Never commit secret values here.",
+
+  "mcpServers": {
+
+    "_example_stdio_local_python": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "python", "mcp/servers/analytics-server.py"],
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL}",
+        "TENANT_ENFORCE": "true"
+      }
+    },
+
+    "_example_stdio_npx_package": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "./data"],
+      "env": {}
+    },
+
+    "_example_http_remote": {
+      "type": "http",
+      "url": "https://mcp.your-service.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${YOUR_SERVICE_TOKEN}"
+      }
+    },
+
+    "_example_sse_remote": {
+      "type": "sse",
+      "url": "https://mcp.your-service.com/sse",
+      "headers": {
+        "Authorization": "Bearer ${YOUR_SERVICE_TOKEN}"
+      }
+    }
+
+  }
+}

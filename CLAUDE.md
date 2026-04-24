@@ -3,86 +3,58 @@
 ## Context
 
 {3-5 line description of the product, the problem it solves, and the target audience.}
-{Fill in during the /speckit.constitution or /speckit.specify phase.}
+{Fill in during /speckit.constitution or /speckit.specify.}
 
 ## Stack
 
-{Defined during the /speckit.plan phase — do not fill in before that.}
+{Defined during /speckit.plan — do not fill in before that.}
 
 ## Language Policy
 
-**All artifacts written to disk must be in English** — `.md` files, configuration comments, code comments, commit messages, spec/task files, issue and PR descriptions. Conversations with the user can be in any language; everything written to disk must be English.
+All artifacts written to disk must be in English — `.md` files, configuration, code comments, commit messages, spec/task files, issue and PR descriptions. Conversations may be in any language; disk is English.
+
+## Sources of truth (read on demand, do not embed)
+
+- Non-negotiable rules: `.specify/memory/constitution.md`
+- Architecture decisions: `docs/ARCHITECTURE-DECISIONS.md`
+- MCP contracts: `docs/mcp-contracts.md`
+- Module docs: `docs/modules/{module}.md` — load only the one you are touching
 
 ## Spec Kit
 
-This project uses Spec-Driven Development via the GitHub Spec Kit.
-Read `.specify/memory/constitution.md` first — it is the source of truth.
-Everything there is non-negotiable.
+Spec-Driven Development. The constitution is the source of truth — consult it before naming artifacts or making architectural decisions.
 
-### Available commands
+Commands: `/speckit.constitution`, `/speckit.specify`, `/speckit.clarify`, `/speckit.plan`, `/speckit.tasks`, `/speckit.analyze`, `/speckit.implement`.
 
-- `/speckit.constitution` — define project principles
-- `/speckit.specify` — create the spec (WHAT, not HOW)
-- `/speckit.clarify` — resolve ambiguities in the spec
-- `/speckit.plan` — technical plan + architecture decisions
-- `/speckit.tasks` — generate tasks with security checklist
-- `/speckit.analyze` — validate consistency across artifacts
-- `/speckit.implement` — execute implementation
+## Token economy
 
-## Agent: Behavior Rules
+- Load only the context relevant to the current task
+- Never load the full spec.md or tasks.md — reference specific sections
+- Ask before loading another module's context
+- Prefer pointers over embeds in any doc you write
 
-### Minimal Context (Token Economy)
+## Defaults
 
-- Load ONLY context relevant to the current task
-- Never load the full spec.md — reference specific sections
-- Never load the full tasks.md — work task by task
-- architecture.md: load once per session, reference by name afterwards
-- If context from another module is needed, ask explicitly with justification
-
-### Default Behavior
-
-- Always check constitution.md before naming any artifact
-- Always check docs/mcp-contracts.md before creating a new MCP integration
-- Never create secrets, credentials, or tokens in code — always use .env
+- Never create secrets in code — use `.env`; never read `.env*` files
 - Never make network calls not documented in the plan
-- Ask before making architectural decisions not covered in the spec
-- Prefer established libraries over implementing from scratch
-- When finishing a task, run lint (biome/ruff) and tests before committing
+- Ask before architectural decisions not covered in the spec
+- Prefer established libraries over custom code
+- Before committing: run lint (biome/ruff) and tests
 
-### Worktree Workflow
+## MCP policy
 
-Every task must be executed in an isolated worktree:
+- Claude.ai account connectors are **disabled by default** in this project (`.claude/settings.json` sets `ENABLE_CLAUDEAI_MCP_SERVERS=false`)
+- Project-specific MCP servers are declared in `.mcp.json` at the repo root (team-shared, committed)
+- Contract first: register every tool in `docs/mcp-contracts.md` before implementing — use the `mcp-contract` skill
 
-```bash
-# Create worktree
-git worktree add ../{project}-{feature}-{task} feature/{feature}/{task}
+## Skills (triggered on demand — do not inline their content here)
 
-# When task is complete
-git checkout feature/{feature}
-git merge feature/{feature}/{task} --no-ff -m "task({number}): {name}"
-git worktree remove ../{project}-{feature}-{task}
-git branch -d feature/{feature}/{task}
-```
+- `worktree-workflow` — create, merge, and clean up task worktrees
+- `security-checklist` — run before marking any task complete
+- `mcp-contract` — register MCP tools before implementing them
 
-### Security
+## Docs to keep current
 
-Before marking any task as complete:
-
-- [ ] Inputs validated and sanitized on the server
-- [ ] Authentication verified before business logic
-- [ ] Parameterized queries — zero string interpolation in SQL
-- [ ] No sensitive data in logs or error responses
-- [ ] Secrets in environment variables — none hardcoded
-- [ ] Dependencies audited (npm audit / pip-audit)
-
-### Documentation
-
-- Update `docs/modules/{module}.md` when modifying a module
-- Update `docs/mcp-contracts.md` if a new MCP tool is created
-- Keep CHANGELOG.md updated with Conventional Commits
-
-## References
-
-- Conventions: `.specify/memory/constitution.md`
-- Architecture: `docs/architecture.md`
-- MCP contracts: `docs/mcp-contracts.md`
+- `docs/modules/{module}.md` when modifying a module
+- `docs/mcp-contracts.md` when creating/changing MCP tools
+- `CHANGELOG.md` with Conventional Commits

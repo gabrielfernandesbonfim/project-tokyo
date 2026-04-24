@@ -3,7 +3,8 @@
   "autoUpdatesChannel": "latest",
   "env": {
     "MAX_THINKING_TOKENS": "10000",
-    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "85"
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "85",
+    "ENABLE_CLAUDEAI_MCP_SERVERS": "false"
   },
   "hooks": {
     "PreToolUse": [

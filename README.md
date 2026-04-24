@@ -63,7 +63,11 @@ claude
 ```
 project-tokyo/
 ├── .claude/
-│   └── settings.json          # Project settings (committed)
+│   ├── settings.json          # Project settings (committed)
+│   └── skills/                # Lazy-loaded workflows (triggered on demand)
+│       ├── worktree-workflow/ # Worktree create/merge/cleanup
+│       ├── security-checklist/# Pre-complete security gates
+│       └── mcp-contract/      # MCP tool registration rules
 ├── .github/
 │   └── workflows/
 │       └── ci.yml             # CI: lint, test, security
@@ -73,12 +77,16 @@ project-tokyo/
 │   ├── claude-settings-user.json  # User settings (copy to ~/.claude/)
 │   └── mcp-contracts.md       # MCP contracts template
 ├── .env.example               # Keys without values — env documentation
+├── .mcp.json                  # Project-scoped MCP servers (empty by default)
+├── .mcp.json.example          # MCP stanza reference (stdio / http / sse)
 ├── .gitignore
 ├── .pre-commit-config.yaml    # gitleaks + formatting
-├── CLAUDE.md                  # Agent instructions
+├── CLAUDE.md                  # Minimal agent instructions (pointers, not embeds)
 ├── constitution.md            # → moved to .specify/ after specify init
 └── README.md
 ```
+
+> **Context budget**: `CLAUDE.md` is intentionally short — it only holds rules that must apply to every turn. Procedural know-how (worktree, security, MCP) lives in `.claude/skills/*` and is injected only when the agent needs it.
 
 > **Note**: After `specify init`, the constitution moves to `.specify/memory/constitution.md`. The `constitution.md` file at the root is the template — copy its contents there.
 

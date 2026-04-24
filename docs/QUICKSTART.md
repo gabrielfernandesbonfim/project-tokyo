@@ -252,7 +252,55 @@ gh pr create \
 
 ---
 
-## 8. Secrets management
+## 8. MCP servers (per project)
+
+Tokyo disables your Claude.ai account connectors (Apollo.io, Google Drive, Windsor.ai, etc.) **by default** in every new project. This keeps the per-session token baseline tight and forces explicit, project-scoped tool surfaces.
+
+### How it works
+
+- `.claude/settings.json` in the template sets `ENABLE_CLAUDEAI_MCP_SERVERS=false`
+- Only MCP servers declared in the project (via `.mcp.json` or local scope) load
+- Run `/mcp` inside Claude Code to see what is actually active
+
+### Declare a project MCP server
+
+`.mcp.json` lives at the repo root and is committed (team-shared). The template ships with it empty:
+
+```json
+{ "mcpServers": {} }
+```
+
+See `.mcp.json.example` for reference stanzas covering `stdio`, `http`, and `sse` transports, including environment expansion (`${VAR}`) for secrets.
+
+Add servers via CLI (it writes to `.mcp.json` for you):
+
+```bash
+# Team-shared (writes to .mcp.json at repo root)
+claude mcp add --transport http --scope project my-server https://mcp.example.com
+
+# Or per-developer (not committed — goes to ~/.claude.json under this project)
+claude mcp add --transport http my-server https://mcp.example.com
+```
+
+Register every tool in `docs/mcp-contracts.md` **before** implementing it. The `mcp-contract` skill guides this.
+
+### If a project genuinely needs a Claude.ai connector
+
+Remove or override the env var in `.claude/settings.json`:
+
+```json
+{
+  "env": {
+    "ENABLE_CLAUDEAI_MCP_SERVERS": "true"
+  }
+}
+```
+
+Do this deliberately per project — not by default.
+
+---
+
+## 9. Secrets management
 
 ```bash
 # .env.example is committed — documents the required keys
@@ -285,6 +333,8 @@ To sync between machines: `.env.local` must be transferred manually (via passwor
 | Run JS/TS tests | `npx vitest run` |
 | Run Python tests | `pytest` |
 | Scan for secrets | `gitleaks detect` |
+| List active MCP | `/mcp` inside Claude Code |
+| Inspect context use | `/context` inside Claude Code |
 | Create issue | `gh issue create` |
 | Create PR | `gh pr create` |
 | Close issue | `gh issue close {N}` |
