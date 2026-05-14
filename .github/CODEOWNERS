@@ -1,0 +1,25 @@
+# CODEOWNERS — required reviewers for harness-critical paths.
+#
+# Replace @your-org/maintainers with your team or username before using this
+# template in a real repo. Without a real owner here, GitHub will not enforce
+# review requirements on these paths.
+
+# Harness enforcement layer — never merge without a maintainer review
+/.claude/hooks/                       @your-org/maintainers
+/.claude/settings.json                @your-org/maintainers
+/.claude/commands/                    @your-org/maintainers
+/.claude/skills/                      @your-org/maintainers
+/.claude/context/state.json           @your-org/maintainers
+
+# Spec Kit core
+/.specify/memory/constitution.md      @your-org/maintainers
+/constitution.md                      @your-org/maintainers
+
+# Harness documentation
+/docs/harness-architecture.md         @your-org/maintainers
+/docs/harness/                        @your-org/maintainers
+
+# CI gates
+/.github/workflows/                   @your-org/maintainers
+/.github/CODEOWNERS                   @your-org/maintainers
+/.github/pull_request_template.md     @your-org/maintainers

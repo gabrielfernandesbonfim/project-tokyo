@@ -5,13 +5,18 @@
     "defaultMode": "default",
     "deny": [
       "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~)",
       "Bash(sudo:*)",
       "Bash(su:*)",
       "Bash(curl * | bash)",
-      "Bash(wget * | bash)"
+      "Bash(curl * | sh)",
+      "Bash(wget * | bash)",
+      "Bash(wget * | sh)"
     ],
     "allow": [
       "Bash(git:*)",
+      "Bash(gh:*)",
       "Bash(npm:*)",
       "Bash(npx:*)",
       "Bash(pnpm:*)",
@@ -20,22 +25,22 @@
       "Bash(python:*)",
       "Bash(uv:*)",
       "Bash(uvx:*)",
-      "Bash(cat:*)",
       "Bash(ls:*)",
       "Bash(pwd)",
       "Bash(mkdir:*)",
       "Bash(cp:*)",
       "Bash(mv:*)",
       "Bash(find:*)",
-      "Bash(grep:*)",
-      "Bash(head:*)",
-      "Bash(tail:*)",
-      "Bash(echo:*)",
-      "Bash(touch:*)",
-      "Bash(gh:*)"
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(jq:*)",
+      "Bash(rg:*)"
     ]
   },
   "env": {
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "MAX_THINKING_TOKENS": "10000",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "85",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "200000"
   }
 }

@@ -86,11 +86,13 @@ cp docs/claude-settings-user.json ~/.claude/settings.json
 
 > **Warning**: This overwrites any existing `~/.claude/settings.json`. Back it up first if you have customizations.
 
-The user settings define:
-- **Default model**: Sonnet (switch to Opus manually with `/model opus` when needed)
-- **Deny permissions**: blocks destructive commands
-- **Allow permissions**: unlocks development tools without confirmation prompts
+The user settings define **per-machine preferences** that should NOT be in project settings:
+- **Default model**: Sonnet (switch to Opus manually with `/model opus`)
+- **Thinking budget**: `MAX_THINKING_TOKENS=10000`
+- **Compaction window**: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=85`, `CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000`
 - **Telemetry disabled**
+
+The **safety baseline** (denies + hooks) lives in the project's `.claude/settings.json` and is shared across every clone — see `docs/harness-architecture.md`.
 
 To use Opus: `/model opus` inside Claude Code (planning, architecture, complex decisions).
 For extended thinking: add `ultrathink` to your message when needed.
@@ -155,6 +157,23 @@ rm constitution.md
 pre-commit install
 ```
 
+### Activate the session-lifecycle hooks (one-time)
+
+The harness ships three optional hooks (`session-start`, `session-end`, `pre-compact`) under `docs/harness/bootstrap/`. They are not pre-installed because `harness-lock` blocks the agent from writing into `.claude/hooks/`. Install once per clone:
+
+```bash
+mv docs/harness/bootstrap/session-start.sh .claude/hooks/
+mv docs/harness/bootstrap/session-end.sh   .claude/hooks/
+mv docs/harness/bootstrap/pre-compact.sh   .claude/hooks/
+chmod 755 .claude/hooks/session-*.sh .claude/hooks/pre-compact.sh
+```
+
+Then add the registration blocks to `.claude/settings.json` per `docs/harness/bootstrap/INSTALL.md`. Verify by starting a Claude session — `session-start.sh` should run silently or print `Last session: <line>`.
+
+### Set `implementation_dirs`
+
+Edit `CLAUDE.md` (the YAML under **Implementation Directories**) *and* `.claude/context/state.json` (the `implementation_dirs` array) so they match. `spec-guard` reads `state.json`; CI and humans read `CLAUDE.md`. They must agree.
+
 ---
 
 ## 5. Start development
@@ -194,9 +213,19 @@ claude
 # Generate tasks with checklists
 /speckit.tasks
 
+# Activate the spec — this flips the spec-guard gate
+# (required before /speckit.implement can write into implementation_dirs)
+/spec-activate {slug}
+
 # Implement task by task
 /speckit.implement
 ```
+
+> **Project slash commands** the template adds on top of Spec Kit:
+> - `/spec-activate <slug>` — approve a spec; unblocks writes in `implementation_dirs`
+> - `/spec-status` — show active spec, phase, task counts
+> - `/session-resume` — recover context after compaction or a break
+> - `/checkpoint [message]` — safe local commit (no push, no secrets)
 
 ---
 

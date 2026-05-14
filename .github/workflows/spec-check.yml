@@ -1,0 +1,82 @@
+name: Spec Check
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: spec-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  spec-gate:
+    name: Spec gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Enforce spec presence for implementation changes
+        run: |
+          set -euo pipefail
+
+          STATE=".claude/context/state.json"
+          if [ ! -f "$STATE" ]; then
+            echo "::warning::No .claude/context/state.json — harness not initialized; skipping spec gate."
+            exit 0
+          fi
+
+          # Read implementation_dirs; fall back to defaults when empty
+          mapfile -t DIRS < <(jq -r '.implementation_dirs[]? // empty' "$STATE")
+          if [ "${#DIRS[@]}" -eq 0 ]; then
+            DIRS=(src/ lib/ app/ pkg/ internal/ cmd/ api/)
+          fi
+
+          # Files changed in the PR vs base
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          mapfile -t CHANGED < <(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
+
+          # Did the PR touch any implementation dir?
+          TOUCHED_IMPL=0
+          for f in "${CHANGED[@]}"; do
+            for d in "${DIRS[@]}"; do
+              d="${d%/}/"
+              case "$f" in
+                "$d"*) TOUCHED_IMPL=1; break 2 ;;
+              esac
+            done
+          done
+
+          if [ "$TOUCHED_IMPL" -eq 0 ]; then
+            echo "No implementation_dirs touched — gate passes."
+            exit 0
+          fi
+
+          # Implementation was touched. Require a spec.md to exist in the PR's tree
+          # under either .specify/specs/<slug>/spec.md or specs/<slug>/spec.md.
+          if compgen -G ".specify/specs/*/spec.md" > /dev/null || \
+             compgen -G "specs/*/spec.md" > /dev/null; then
+            SPEC_FOUND=1
+          else
+            SPEC_FOUND=0
+          fi
+
+          if [ "$SPEC_FOUND" -eq 0 ]; then
+            echo "::error::PR modifies implementation_dirs but no spec.md exists under .specify/specs/ or specs/."
+            echo "Run /speckit.specify locally, commit the spec, then re-push."
+            exit 1
+          fi
+
+          # Also require the PR body to reference at least one spec slug.
+          BODY="${{ github.event.pull_request.body }}"
+          if ! printf '%s' "$BODY" | grep -qiE 'spec[: ]+[a-z0-9][a-z0-9_-]*'; then
+            echo "::error::PR body must reference the spec (e.g. 'Spec: my-feature-slug')."
+            exit 1
+          fi
+
+          echo "Spec gate passes."
