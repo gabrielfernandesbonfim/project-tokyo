@@ -37,7 +37,7 @@ Run this **before** marking a task as complete. A task that fails any item is no
 
 ## Gate 5 — MCP tools (when the task touches MCP)
 
-- [ ] Tool registered in `docs/mcp-contracts.md` before implementation (see `mcp-contract` skill)
+- [ ] Tool registered in `docs/optional/mcp-contracts.md` before implementation (see `mcp-contract` skill)
 - [ ] Read tools do not hold write credentials
 - [ ] Tenant isolation validated inside the tool body
 - [ ] Minimum required permission documented

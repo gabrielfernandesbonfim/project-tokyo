@@ -9,7 +9,7 @@ MCP tools are the project's agent surface. Treat them as a public API: contract 
 
 ## Rule 0 — Register before implementing
 
-Every new MCP tool is added to `docs/mcp-contracts.md` **before** any code is written. If the entry is not there yet, stop and add it.
+Every new MCP tool is added to `docs/optional/mcp-contracts.md` **before** any code is written. If the entry is not there yet, stop and add it.
 
 ## Decide whether MCP is the right shape
 
@@ -46,7 +46,7 @@ One domain per MCP server. Do not build a monolithic "everything server".
 
 ## Contract entry template
 
-Copy this into `docs/mcp-contracts.md` before coding:
+Copy this into `docs/optional/mcp-contracts.md` before coding:
 
 ```markdown
 ### {domain}_{verb}_{resource}
@@ -63,7 +63,7 @@ Keep entries sorted by domain.
 
 ## Server registration
 
-Add the server to the registry table at the top of `docs/mcp-contracts.md`:
+Add the server to the registry table at the top of `docs/optional/mcp-contracts.md`:
 
 ```markdown
 | {name}-server | {domain} | mcp/servers/{name}-server.py | planned / active |

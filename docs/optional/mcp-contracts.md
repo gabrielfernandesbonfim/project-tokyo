@@ -1,7 +1,10 @@
 # MCP Contracts
 
+> **Optional** — this file is only relevant if your project exposes tools to LLMs.
+> If your project does not use MCP, ignore this file (or delete it).
+>
 > Central registry of all MCP servers and tools in the project.
-> Update **before** implementing any new tool.
+> Update **before** implementing any new tool. See the `mcp-contract` skill.
 
 ---
 

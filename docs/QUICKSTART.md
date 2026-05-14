@@ -282,7 +282,7 @@ claude mcp add --transport http --scope project my-server https://mcp.example.co
 claude mcp add --transport http my-server https://mcp.example.com
 ```
 
-Register every tool in `docs/mcp-contracts.md` **before** implementing it. The `mcp-contract` skill guides this.
+Register every tool in `docs/optional/mcp-contracts.md` **before** implementing it. The `mcp-contract` skill guides this.
 
 ### If a project genuinely needs a Claude.ai connector
 
