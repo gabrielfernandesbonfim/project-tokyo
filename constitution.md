@@ -87,7 +87,7 @@ This rule applies regardless of the spoken/chat language used with the agent. Co
 
 ### Absolute Rules
 
-- Zero secrets in code — always environment variables via `.env`
+- Zero secrets in code — use a secrets manager (1Password CLI, Doppler, AWS SSM, Vault) when available, or `.env` files for local development. The harness blocks the agent from reading `.env*`, but that protection is best-effort against accidents — see `docs/harness-architecture.md` §10 for limits and the escalation path (UID isolation / container) for projects that need a real sandbox.
 - Zero SQL string concatenation — always parameterized queries or ORM
 - Zero user data in logs — mask PII before logging
 - Zero unauthenticated endpoints (except explicitly public routes)

