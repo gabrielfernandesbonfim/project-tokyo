@@ -1,113 +1,74 @@
 # Project Tokyo
 
-AI-driven development framework for web projects. Combines **Spec Kit** (spec-driven development) with the **Claude Code CLI** to produce a reproducible, secure, and scalable workflow.
+Template for spec-driven development with **Claude Code** + **GitHub Spec Kit**.
+Works for any software project — web, CLI, library, data pipeline, mobile, service.
 
-## What it is
+## Use this template
 
-A GitHub template repository. For each new project, click **Use this template** and start with the full structure ready: constitution, CLAUDE.md, CI/CD, settings, and the Spec Kit spec → plan → tasks → implement workflow.
+1. Click **Use this template** on GitHub → create your repo
+2. Clone locally
+3. Initialize Spec Kit and the harness:
 
-## Framework Stack (not the project's)
+   ```bash
+   specify init . --ai claude --ai-skills --force
+   cp constitution.md .specify/memory/constitution.md && rm constitution.md
+   pre-commit install
+   ```
 
-The framework is stack-agnostic. Each project defines its tools during the architecture phase (`/speckit.plan`). What Tokyo standardizes:
+4. (Once per machine) copy user settings:
 
-- **Methodology**: Spec Kit (GitHub) — spec-driven development
-- **Agent**: Claude Code CLI with skills (`--ai-skills`)
-- **Versioning**: Git + GitHub (Issues, PRs, Actions)
-- **Quality**: Biome (JS/TS) + Ruff (Python) — automatic lint and formatting
-- **Testing**: Vitest (JS/TS) + Pytest (Python) — defined per project
-- **CI/CD**: GitHub Actions — lint → test → security scan
-- **Security**: gitleaks (pre-commit), Dependabot, npm audit / pip-audit
+   ```bash
+   mkdir -p ~/.claude && cp docs/claude-settings-user.json ~/.claude/settings.json
+   ```
 
-## Quickstart
+5. Open Claude Code and run the Spec Kit flow:
 
-```bash
-# 1. Prerequisites (run inside WSL or Linux)
-git --version          # 2.5+
-node --version         # 24 LTS
-python3 --version      # 3.13
-gh auth login          # GitHub CLI authenticated
-npm install -g @anthropic-ai/claude-code
+   ```
+   /speckit.constitution → /speckit.specify → /speckit.clarify
+   → /speckit.plan → /speckit.tasks → /speckit.analyze → /speckit.implement
+   ```
 
-# 2. Install Spec Kit CLI
-uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
+Each task runs in an isolated worktree (`worktree-workflow` skill).
 
-# 3. Create project from the template
-# → On GitHub, click "Use this template" on this repo
-# → Clone the new repo locally
+## What you get
 
-# 4. Initialize Spec Kit
-cd my-project
-specify init . --ai claude --ai-skills --force
+- **Spec Kit enforced** — no code in implementation dirs without an active approved spec (hook-level, not honor-system)
+- **Security baseline** — `.env`, `secrets/`, SSH keys, `git push --force`, dangerous `rm` blocked at hook level
+- **Session context** — every session logs to `.claude/context/sessions/`; auto-pruned by count; `HISTORY.md` is committed and queryable
+- **Defense in depth** — `settings.json` denies + bash hooks + harness-lock + pre-commit gitleaks + CI gitleaks
+- **CI ready** — lint, tests, secrets scan, dependency audit, spec-check (PR fails without spec)
+- **MCP opt-in** — `.mcp.json` empty by default; declare per project only if needed
+- **Stack-neutral** — runtime and tooling chosen during `/speckit.plan`
 
-# 5. Copy user settings (once per machine)
-cp docs/claude-settings-user.json ~/.claude/settings.json
+## Files you customize first
 
-# 6. Open Claude Code and start
-claude
-```
+| File | When |
+|---|---|
+| `constitution.md` | During `/speckit.constitution` |
+| `CLAUDE.md` | Fill `Project Type` + `Implementation Directories` during `/speckit.plan` |
+| `docs/ARCHITECTURE-DECISIONS.md` | During `/speckit.plan` |
+| `.claude/context/state.json` | Mirror `implementation_dirs` from CLAUDE.md |
+| `.mcp.json` | Only if exposing tools to LLMs |
+| `.env.example` | Add keys (no values) as discovered |
 
-## Workflow Summary
+## Read more
 
-```
-/speckit.constitution  →  Define project principles
-/speckit.specify       →  Describe WHAT and WHY (no tech stack)
-/speckit.clarify       →  Resolve ambiguities
-/speckit.plan          →  Define HOW: stack, architecture, MCP surface
-/speckit.tasks         →  Generate tasks with security checklists
-/speckit.analyze       →  Validate consistency across artifacts
-/speckit.implement     →  Execute task by task in isolated worktrees
-```
-
-## Repository Structure
-
-```
-project-tokyo/
-├── .claude/
-│   ├── settings.json          # Project settings (committed)
-│   └── skills/                # Lazy-loaded workflows (triggered on demand)
-│       ├── worktree-workflow/ # Worktree create/merge/cleanup
-│       ├── security-checklist/# Pre-complete security gates
-│       └── mcp-contract/      # MCP tool registration rules
-├── .github/
-│   └── workflows/
-│       └── ci.yml             # CI: lint, test, security
-├── docs/
-│   ├── QUICKSTART.md          # Detailed step-by-step guide
-│   ├── ARCHITECTURE-DECISIONS.md  # Per-project decisions template
-│   ├── claude-settings-user.json  # User settings (copy to ~/.claude/)
-│   └── mcp-contracts.md       # MCP contracts template
-├── .env.example               # Keys without values — env documentation
-├── .mcp.json                  # Project-scoped MCP servers (empty by default)
-├── .mcp.json.example          # MCP stanza reference (stdio / http / sse)
-├── .gitignore
-├── .pre-commit-config.yaml    # gitleaks + formatting
-├── CLAUDE.md                  # Minimal agent instructions (pointers, not embeds)
-├── constitution.md            # → moved to .specify/ after specify init
-└── README.md
-```
-
-> **Context budget**: `CLAUDE.md` is intentionally short — it only holds rules that must apply to every turn. Procedural know-how (worktree, security, MCP) lives in `.claude/skills/*` and is injected only when the agent needs it.
-
-> **Note**: After `specify init`, the constitution moves to `.specify/memory/constitution.md`. The `constitution.md` file at the root is the template — copy its contents there.
-
-## Documentation
-
-- **[QUICKSTART.md](docs/QUICKSTART.md)** — Full setup and usage guide
-- **[ARCHITECTURE-DECISIONS.md](docs/ARCHITECTURE-DECISIONS.md)** — Stack decisions template
-- **[mcp-contracts.md](docs/mcp-contracts.md)** — MCP contracts template
+- **Setup detail & troubleshooting** → `docs/QUICKSTART.md`
+- **How the harness works** → `docs/harness-architecture.md` (hooks, enforcement layers, session lifecycle)
+- **Non-negotiable rules** → `constitution.md` (or `.specify/memory/constitution.md` after `specify init`)
 
 ## Language Policy
 
-All project artifacts written to disk — `.md` files, configuration, code comments, commit messages, issue/PR descriptions, spec/task files — must be in **English**, regardless of the spoken/chat language used with the agent. Rationale: English yields the best LLM performance (largest training corpus, cleanest tokenization) and gives shared tooling a consistent vocabulary. See `constitution.md` for the full rule.
+All on-disk artifacts in English. Conversations with the agent in any language. Rationale: English yields the best LLM performance and gives shared tooling (grep, embeddings) a consistent vocabulary.
 
-## Recommended Versions
+## Recommended versions
 
-| Tool | Version | Reason |
-|---|---|---|
-| Node.js | 24 LTS | Supported until April 2028 |
-| Python | 3.13 | Stable, full library compatibility |
-| Git | 2.5+ | Worktree support |
-| uv | latest | Package manager for Spec Kit |
+| Tool | Version |
+|---|---|
+| Node.js | 24 LTS |
+| Python | 3.13 |
+| Git | 2.5+ |
+| uv | latest |
 
 ## License
 

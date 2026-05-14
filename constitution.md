@@ -28,14 +28,16 @@ This rule applies regardless of the spoken/chat language used with the agent. Co
 
 ## Naming Conventions
 
-### Database
+> Use the conventions for the languages in your stack — ignore the rest.
+
+### Database (when applicable)
 
 - Tables: `snake_case`, plural, with domain prefix (`auth_users`, `tenant_orgs`)
 - Foreign keys: `{referenced_table_singular}_id`
 - Indexes: `idx_{table}_{column}`
 - Migrations: `{timestamp}_{snake_case_description}.sql`
 
-### Code (TypeScript/React)
+### Code — TypeScript / JavaScript
 
 - Files: `kebab-case.ts` / `kebab-case.tsx`
 - React components: `PascalCase.tsx`
@@ -44,12 +46,27 @@ This rule applies regardless of the spoken/chat language used with the agent. Co
 - Types and interfaces: `PascalCase`
 - Hooks: `use-{name}.ts`
 
-### Code (Python)
+### Code — Python
 
 - Files: `snake_case.py`
 - Classes: `PascalCase`
 - Functions and variables: `snake_case`
 - Constants: `SCREAMING_SNAKE_CASE`
+
+### Code — Go
+
+- Files: `snake_case.go`
+- Packages: lowercase, single-word
+- Exported identifiers: `PascalCase`
+- Unexported identifiers: `camelCase`
+- Test files: `{name}_test.go`
+
+### Code — Rust
+
+- Files and modules: `snake_case.rs`
+- Types, traits, enums: `PascalCase`
+- Functions, variables, modules: `snake_case`
+- Constants and statics: `SCREAMING_SNAKE_CASE`
 
 ### Branches and Worktrees
 
@@ -85,6 +102,8 @@ This rule applies regardless of the spoken/chat language used with the agent. Co
 
 ### Multi-tenancy (when applicable)
 
+> Skip this subsection if your project has a single tenant or no tenancy concept.
+
 - Tenant ID validated on the server, never trusted from the client
 - Row-level security on multi-tenant tables
 - Logs segregated by tenant
@@ -100,7 +119,10 @@ This rule applies regardless of the spoken/chat language used with the agent. Co
 
 ---
 
-## MCP Architecture Principles
+## MCP Architecture Principles (when applicable)
+
+> Skip this entire section if your project does not expose tools to LLMs.
+> MCP is opt-in for this template — declare it during `/speckit.plan` if relevant.
 
 ### When to create an MCP Server
 
@@ -117,7 +139,7 @@ This rule applies regardless of the spoken/chat language used with the agent. Co
 
 ### Registry
 
-- Every tool registered in `docs/mcp-contracts.md` **before** implementation
+- Every tool registered in `docs/optional/mcp-contracts.md` **before** implementation
 - One MCP server per domain, not monolithic
 
 ---
@@ -184,4 +206,6 @@ Examples:
 
 ## Stack Decisions
 
-Stack is defined per project during the `/speckit.plan` phase. The `docs/ARCHITECTURE-DECISIONS.md` template guides those decisions. This constitution does not prescribe tools — it prescribes **practices**.
+Stack and project type are defined per project during the `/speckit.plan` phase. This template is **stack-agnostic** — it works for web apps, CLI tools, libraries, data pipelines, mobile apps, services, or anything else. The `docs/ARCHITECTURE-DECISIONS.md` template guides those decisions.
+
+This constitution prescribes **practices**, not tools. Sections marked "(when applicable)" are conditional — skip them if irrelevant to your project type.

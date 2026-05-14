@@ -2,109 +2,142 @@
 
 > Fill in during `/speckit.plan`. Every decision must be justified.
 > This document is the reference for all technical choices in the project.
+>
+> Sections marked "(if applicable)" are conditional — delete or mark `N/A` if irrelevant.
 
 ---
 
-## 1. Frontend
+## 1. Project Type
+
+| Field | Value |
+|---|---|
+| Type | {web app / CLI tool / library / data pipeline / mobile / desktop / service / game / other} |
+| Distribution | {npm package / container image / binary / static site / app store / internal service} |
+| Primary users | {end users / developers / agents / internal team} |
+
+## 2. Runtime & Language
 
 | Decision | Options Considered | Choice | Rationale |
 |---|---|---|---|
-| Framework | Next.js, Remix, Nuxt, SvelteKit | {choice} | {reason} |
-| Styling | Tailwind, CSS Modules, Styled Components | {choice} | {reason} |
-| State management | Zustand, Jotai, Redux Toolkit, Context | {choice} | {reason} |
-| Forms | React Hook Form, Formik, native | {choice} | {reason} |
+| Language | {...} | {choice} | {reason} |
+| Runtime / Engine | {...} | {choice} | {reason} |
+| Package manager | {...} | {choice} | {reason} |
+| Build tool (if applicable) | {...} | {choice} | {reason} |
 
-## 2. Backend
+## 3. Storage (if applicable)
 
-| Decision | Options Considered | Choice | Rationale |
-|---|---|---|---|
-| Runtime/Framework | Next.js API Routes, FastAPI, Express, Hono | {choice} | {reason} |
-| ORM/Query builder | Prisma, Drizzle, SQLAlchemy, Knex | {choice} | {reason} |
-| Validation | Zod, Pydantic, Joi | {choice} | {reason} |
-
-## 3. Database
+> Skip if the project has no persistent state.
 
 | Decision | Options Considered | Choice | Rationale |
 |---|---|---|---|
-| Primary database | Supabase (Postgres), Neon, Turso, PlanetScale | {choice} | {reason} |
-| Warehouse/Analytics | BigQuery, ClickHouse, DuckDB/MotherDuck | {choice} | {reason} |
-| Cache | Redis, Upstash, in-memory | {choice} | {reason} |
+| Primary storage | {sqlite / postgres / files / object store / in-memory / none} | {choice} | {reason} |
+| Cache | {Redis / in-process / N/A} | {choice} | {reason} |
+| Analytics / Warehouse | {BigQuery / ClickHouse / DuckDB / N/A} | {choice} | {reason} |
 
-### Database comparison (reference)
+## 4. Interface(s)
 
-**Managed Postgres**:
-- **Supabase**: Auth + DB + Storage + Realtime integrated. Generous free tier (500MB). Best for MVPs that need fast auth. Cost scales with MAUs.
-- **Neon**: Pure serverless Postgres, scale-to-zero. Cheaper at low-to-medium production usage. No built-in auth. Database branching for dev/preview environments.
-- **Railway**: Simple Postgres, good DX. No major differentiators. Good for prototypes.
+What this project exposes to the outside world.
 
-**Analytics/Warehouse**:
-- **DuckDB/MotherDuck**: Local or serverless analytics. Very low cost. Ideal for data < 100GB. No infrastructure to manage.
-- **ClickHouse Cloud**: High volume, fast queries. More complex to operate.
-- **BigQuery**: Google ecosystem. Pay-per-query. Ideal if already on GCP.
+| Surface | Tech / Framework | Rationale |
+|---|---|---|
+| {HTTP API / CLI / Library API / GUI / MCP / SDK} | {choice} | {reason} |
 
-## 4. Authentication
+## 5. Authentication & Authorization (if applicable)
+
+> Skip if the project has no users or no security boundary.
 
 | Decision | Options Considered | Choice | Rationale |
 |---|---|---|---|
-| Provider | Supabase Auth, Clerk, Auth.js, WorkOS | {choice} | {reason} |
-| Strategy | JWT, Session, OAuth2 | {choice} | {reason} |
-| Multi-tenancy | RLS, Schema per tenant, App-level | {choice} | {reason} |
+| Provider | {...} | {choice} | {reason} |
+| Strategy | {JWT / Session / OAuth2 / API key / N/A} | {choice} | {reason} |
+| Multi-tenancy | {N/A / RLS / schema-per-tenant / app-level} | {choice} | {reason} |
 
-### Auth comparison (reference)
+## 6. External Integrations
 
-- **Supabase Auth**: Free, integrated with Supabase DB. Native RLS. Best for projects already on Supabase.
-- **Clerk**: Best DX, ready-made components, paid after 10k MAU. Good for SaaS.
-- **Auth.js / NextAuth**: Open-source, self-hosted. More work, more control.
-- **WorkOS**: B2B/SSO from day one. Enterprise-ready. Paid.
+Third-party APIs, services, queues, providers.
 
-## 5. Deploy
+| Integration | Purpose | Auth model | Rationale |
+|---|---|---|---|
+
+## 7. Deploy / Distribution
 
 | Decision | Options Considered | Choice | Rationale |
 |---|---|---|---|
-| Frontend | Vercel, Netlify, Cloudflare Pages | {choice} | {reason} |
-| Python backend | Cloud Run (GCP), Railway, Fly.io | {choice} | {reason} |
+| Target | {...} | {choice} | {reason} |
 | CI/CD | GitHub Actions | GitHub Actions | Tokyo standard |
+| Release strategy | {tags / continuous / manual} | {choice} | {reason} |
 
-### Deploy comparison (reference)
+## 8. Observability
 
-**Frontend**:
-- **Vercel**: Zero config for Next.js. Preview deploys. Generous free tier. Recommended default.
-- **Netlify**: Similar to Vercel, better for static sites. Fewer features for Next.js.
-- **Cloudflare Pages**: Cheaper at scale, edge-first. Inferior DX.
+| Decision | Options Considered | Choice | Rationale |
+|---|---|---|---|
+| Error tracking | {Sentry / BetterStack / N/A} | {choice} | {reason} |
+| Logging | {Pino / Winston / structlog / stdlib / N/A} | {choice} | {reason} |
+| Metrics / Uptime | {BetterStack / Checkly / Prometheus / N/A} | {choice} | {reason} |
 
-**Python backend**:
-- **Cloud Run (GCP)**: Container-based, scale-to-zero, pay-per-use. Recommended if already on GCP.
-- **Railway**: Simple, good DX. More expensive than Cloud Run in production.
-- **Fly.io**: Edge deploy, good for global latency. More complex to configure.
+## 9. MCP Surface (optional)
 
-## 6. MCP Surface
+> Skip entirely if the project does not expose tools to LLMs.
 
-> Which modules expose tools for agents or users via natural language?
+Which modules expose tools for agents or users via natural language?
 
 | Module | Has MCP? | Rationale |
 |---|---|---|
-| {module} | Yes/No | {reason} |
 
-Rule: MCP only for modules where an LLM needs to access data or execute actions.
-Never for: ingestion pipelines, auth internals, batch jobs.
+Rule: MCP only when an LLM needs to access data or execute actions. Never for ingestion pipelines, auth internals, or batch jobs.
 
-## 7. Monitoring and Observability
-
-| Decision | Options Considered | Choice | Rationale |
-|---|---|---|---|
-| Error tracking | Sentry, BetterStack, LogRocket | {choice} | {reason} |
-| Logging | Pino, Winston, structlog (Python) | {choice} | {reason} |
-| Uptime | BetterStack, Checkly | {choice} | {reason} |
+Register every tool in `docs/optional/mcp-contracts.md` **before** implementing it. See the `mcp-contract` skill.
 
 ---
 
 ## Decisions Checklist
 
-- [ ] Frontend framework defined
-- [ ] Backend framework defined
-- [ ] Primary database chosen
-- [ ] Authentication defined
+- [ ] Project type defined
+- [ ] Runtime and language chosen
+- [ ] Storage decided (or marked N/A)
+- [ ] Interface(s) declared
+- [ ] Auth decided (or marked N/A)
+- [ ] External integrations mapped
 - [ ] Deploy target defined
-- [ ] MCP surface mapped
-- [ ] Monitoring planned
+- [ ] Observability planned
+- [ ] MCP surface mapped (or marked N/A)
 - [ ] All decisions justified
+- [ ] `CLAUDE.md` → `Implementation Directories` filled
+- [ ] `.claude/context/state.json` → `implementation_dirs` mirrored
+
+---
+
+## Appendix — Stack reference (delete what you don't use)
+
+### Web frontend
+
+- **Next.js**: full-stack React, SSR + ISR, Vercel-first. Default for web apps with no exotic requirements.
+- **Remix**: web-standards-first, good for forms and progressive enhancement.
+- **SvelteKit / Nuxt**: alternatives if you prefer Svelte / Vue.
+
+### Web backend
+
+- **Next.js API Routes**: fast for monolithic Next.js apps.
+- **FastAPI**: typed Python, good for AI/data-heavy work.
+- **Express / Hono**: minimal, flexible.
+
+### Databases
+
+- **Supabase**: Auth + Postgres + Storage + Realtime. Generous free tier. Cost scales with MAUs.
+- **Neon**: serverless Postgres, scale-to-zero, branching for dev/preview.
+- **DuckDB / MotherDuck**: analytics < 100GB, very low cost.
+- **ClickHouse Cloud**: high-volume analytics.
+
+### Auth providers
+
+- **Supabase Auth**: integrated with Supabase DB and RLS.
+- **Clerk**: best DX, paid above 10k MAU. Good for SaaS.
+- **Auth.js**: self-hosted, more control.
+- **WorkOS**: B2B SSO from day one.
+
+### Deploy targets
+
+- **Vercel**: zero-config for Next.js. Preview deploys.
+- **Cloudflare Pages / Workers**: edge-first, cheaper at scale.
+- **Cloud Run (GCP)**: container, scale-to-zero, pay-per-use.
+- **Railway / Fly.io**: simple managed runtimes.
