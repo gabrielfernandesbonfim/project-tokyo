@@ -36,6 +36,11 @@ htmlcov/
 # Claude Code local settings
 .claude/settings.local.json
 
+# Claude harness — per-session full logs are private; HISTORY.md is committed
+.claude/context/sessions/recent/*
+!.claude/context/sessions/recent/.gitkeep
+.claude/context/sessions/precompact-snapshot.md
+
 # Logs
 *.log
 npm-debug.log*
