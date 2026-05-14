@@ -293,13 +293,9 @@ Tokyo disables your Claude.ai account connectors (Apollo.io, Google Drive, Winds
 
 ### Declare a project MCP server
 
-`.mcp.json` lives at the repo root and is committed (team-shared). The template ships with it empty:
+`.mcp.json` lives at the repo root and is committed (team-shared). The template does NOT pre-ship it — `claude mcp add` creates it the first time you register a server.
 
-```json
-{ "mcpServers": {} }
-```
-
-See `.mcp.json.example` for reference stanzas covering `stdio`, `http`, and `sse` transports, including environment expansion (`${VAR}`) for secrets.
+See `docs/optional/mcp.json.example` for reference stanzas covering `stdio`, `http`, and `sse` transports, including environment expansion (`${VAR}`) for secrets.
 
 Add servers via CLI (it writes to `.mcp.json` for you):
 
@@ -331,12 +327,18 @@ Do this deliberately per project — not by default.
 
 ## 9. Secrets management
 
-```bash
-# .env.example is committed — documents the required keys
-# .env.local is NOT committed — contains real values
+The template does NOT ship a `.env.example` — env-based secrets are stack-specific. When your project actually needs secrets, create both files yourself:
 
+```bash
+# .env.example — committed, documents required keys (no values)
+# .env.local  — NOT committed, contains real values
+
+# Create them from scratch with your project's keys, e.g.:
+#   DATABASE_URL=
+#   API_KEY=
+# in .env.example, then:
 cp .env.example .env.local
-# Edit .env.local with real values
+# Fill in real values in .env.local
 
 # For CI/CD, use GitHub Secrets:
 gh secret set DATABASE_URL
@@ -344,7 +346,7 @@ gh secret set API_KEY
 # (values live in GitHub, not in code)
 ```
 
-To sync between machines: `.env.local` must be transferred manually (via password manager, USB, or secure personal cloud). Never commit it.
+The `security.sh` hook blocks reads/edits of `.env*` for the agent; the `.env.example` allow-list lets the agent see the documented keys. To sync `.env.local` between machines, transfer manually via password manager or secure personal cloud — never commit it.
 
 ---
 

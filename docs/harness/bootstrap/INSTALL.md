@@ -68,6 +68,30 @@ To test `pre-compact.sh` without waiting for a real compaction, run it directly:
 cat .claude/context/sessions/precompact-snapshot.md
 ```
 
+## Patch the env deny pattern in `.claude/settings.json`
+
+The current `permissions.deny` list includes `Read(**/.env.*)` which is too broad — it matches `.env.example` and overrides the more specific `Read(**/.env.example)` allow, blocking the agent from reading the documented keys. Replace the pattern with explicit suffixes:
+
+**Find** (in `permissions.deny`):
+```json
+"Read(**/.env)",
+"Read(**/.env.*)",
+```
+
+**Replace with:**
+```json
+"Read(**/.env)",
+"Read(**/.env.local)",
+"Read(**/.env.production)",
+"Read(**/.env.staging)",
+"Read(**/.env.test)",
+"Read(**/.env.development)",
+```
+
+Do the same for the `Edit(**/.env.*)` and `Write(**/.env.*)` patterns. The `Read(**/.env.example)` / `Edit(**/.env.example)` allow rules stay as-is.
+
+Verify by asking the agent to `Read .env.example` once you have created one — it should succeed.
+
 ## After install
 
 Once the hooks are in place and verified, this `docs/harness/bootstrap/` directory can be removed — it exists only to ferry files past `harness-lock`. The same staging pattern applies to any future hook you want to add.

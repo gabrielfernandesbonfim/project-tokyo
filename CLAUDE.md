@@ -72,7 +72,7 @@ MCP is opt-in for this template. **Skip this section if your project does not ex
 
 When enabled:
 - Claude.ai account connectors are disabled by default (`.claude/settings.json` sets `ENABLE_CLAUDEAI_MCP_SERVERS=false`)
-- Project-specific MCP servers declared in `.mcp.json` at repo root (committed, team-shared)
+- Project-specific MCP servers are declared in `.mcp.json` at repo root (committed, team-shared). The file is not pre-shipped — `claude mcp add --scope project ...` creates it on first registration. See `docs/optional/mcp.json.example` for reference stanzas.
 - Contract first: register every tool in `docs/optional/mcp-contracts.md` before implementing — use the `mcp-contract` skill
 
 ## Skills (triggered on demand — do not inline their content here)

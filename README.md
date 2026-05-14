@@ -37,7 +37,7 @@ Each task runs in an isolated worktree (`worktree-workflow` skill).
 - **Session context** — every session logs to `.claude/context/sessions/`; auto-pruned by count; `HISTORY.md` is committed and queryable
 - **Defense in depth** — `settings.json` denies + bash hooks + harness-lock + pre-commit gitleaks + CI gitleaks
 - **CI ready** — lint, tests, secrets scan, dependency audit, spec-check (PR fails without spec)
-- **MCP opt-in** — `.mcp.json` empty by default; declare per project only if needed
+- **MCP opt-in** — `.mcp.json` is not pre-shipped; `claude mcp add` creates it on first server registration. See `docs/optional/mcp.json.example` for reference stanzas.
 - **Stack-neutral** — runtime and tooling chosen during `/speckit.plan`
 
 ## Files you customize first
@@ -48,8 +48,13 @@ Each task runs in an isolated worktree (`worktree-workflow` skill).
 | `CLAUDE.md` | Fill `Project Type` + `Implementation Directories` during `/speckit.plan` |
 | `docs/ARCHITECTURE-DECISIONS.md` | During `/speckit.plan` |
 | `.claude/context/state.json` | Mirror `implementation_dirs` from CLAUDE.md |
-| `.mcp.json` | Only if exposing tools to LLMs |
-| `.env.example` | Add keys (no values) as discovered |
+
+Per-project files created on demand (not in the template):
+
+| File | Created by |
+|---|---|
+| `.mcp.json` | `claude mcp add --scope project ...` |
+| `.env.example`, `.env.local` | Hand — when your project actually has secrets to document |
 
 ## Read more
 
